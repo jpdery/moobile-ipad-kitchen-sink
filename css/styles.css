@@ -1,0 +1,47 @@
+/* Welcome View
+-----------------------------------------------------------------------------*/
+
+.welcome-view .view-content {
+	padding: 25px;
+}
+
+/* Navigation View
+-----------------------------------------------------------------------------*/
+
+.navigation-view {
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #c1c5cc), color-stop(1, #e8eaed));
+}
+
+/* Transition View
+-----------------------------------------------------------------------------*/
+
+.transition-view .view-content {
+	padding: 25px;
+}
+
+.transition-view-title {
+	-webkit-border-radius: 25px;
+	-webkit-box-flex: 1;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	background: rgba(255, 255, 255, 0.5);
+	display: -webkit-box;
+	font-size: 28px;
+	font-weight: normal;
+	padding: 25px;
+	text-align: center;
+}
+
+/* Control View
+-----------------------------------------------------------------------------*/
+
+.control-view .view-content {
+	padding: 25px;
+}
+
+/* Control List View
+-----------------------------------------------------------------------------*/
+
+.control-list-view .list {
+	margin-bottom: 12px;
+}

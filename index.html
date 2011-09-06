@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+
+		<title>moobile-core-test</title>
+
+		<link rel="stylesheet" href="css/iOS.css" />
+		<link rel="stylesheet" href="css/iOS.iPad.css" />
+		<link rel="stylesheet" href="css/styles.css" />
+
+		<script type="text/javascript" src="js/mootools-core.js"></script>
+		<script type="text/javascript" src="js/mootools-more.js"></script>
+
+		<script type="text/javascript" src="js/moobile.js"></script>
+		<script type="text/javascript" src="js/app.js"></script>
+
+	</head>
+	<body>
+
+		<script type="text/javascript">
+		// <![CDATA["
+
+			window.addEvent('ready', function() {
+
+				var rootSideViewController = new KitchenSink.ViewController.Navigation('views/navigation.html');
+				var rootMainViewController = new KitchenSink.ViewController.Welcome('views/welcome.html');
+
+//var rootMainViewController = new KitchenSink.ViewController.Control.Button('views/control/button.html');
+//var rootMainViewController = new KitchenSink.ViewController.Control.List('views/control/bar.html');
+
+				var sideViewControllerStack = new Moobile.ViewControllerStack.Navigation();
+				var mainViewControllerStack = new Moobile.ViewControllerStack.Navigation(null, { back: false });
+
+				var viewControllerPanel = new Moobile.ViewControllerPanel();
+
+				var windowController = new Moobile.WindowController('window');
+				windowController.setRootViewController(viewControllerPanel);
+
+				viewControllerPanel.setSideViewController(sideViewControllerStack);
+				viewControllerPanel.setMainViewController(mainViewControllerStack)
+
+				sideViewControllerStack.pushViewController(rootSideViewController);
+				mainViewControllerStack.pushViewController(rootMainViewController);
+
+			});
+
+		// "]]>
+		</script>
+
+		<div id="window"></div>
+
+	</body>
+</html>
