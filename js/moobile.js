@@ -1374,12 +1374,7 @@ Element.Properties.name = {
 
 		var role = this.get('data-role');
 		if (role) {
-			var name = this.get('data-name');
-			if (name == null) {
-				name = role + '-' + String.uniqueID();
-				this.set('name', name);
-			}
-			return name;
+			return this.get('data-name');
 		}
 
 		return this.getProperty(name);
@@ -2387,7 +2382,7 @@ Moobile.View = new Class({
 
 		this.setOptions(options);
 
-		this.name = name || String.uniqueID();
+		this.name = name || null;
 
 		this.build(element);
 
@@ -2884,7 +2879,12 @@ Moobile.Control = new Class({
 
 	options: {
 		className: null,
-		styleName: null
+		styleName: null,
+		disabled: false,
+		selected: false,
+		selectable: true,
+		highlighted: false,
+		highlightable: true
 	},
 
 	build: function(element) {
@@ -2892,6 +2892,13 @@ Moobile.Control = new Class({
 		this.parent(element);
 
 		this.element.set('role', 'control');
+
+		if (this.options.disabled) this.setDisabled(true);
+		if (this.options.selected) this.setSelected(true);
+		if (this.options.highlighted) this.options.setHighlighted(true);
+
+		if (!this.options.selectable) this.setSelectable(false);
+		if (!this.options.highlightable) this.setHighlightable(false);
 
 		var styleName = this.options.styleName;
 		if (styleName) {
@@ -2949,6 +2956,11 @@ Moobile.Control = new Class({
 		return this._getState('selected');
 	},
 
+	setSelectable: function(selectable) {
+		this.selectable = selectable;
+		return this;
+	},
+
 	isSelectable: function() {
 		return this.selectable;
 	},
@@ -2961,8 +2973,12 @@ Moobile.Control = new Class({
 		return this._getState('highlighted');
 	},
 
+	setHighlightable: function(highlightable) {
+		this.highlightable = highlightable;
+	},
+
 	isHighlightable: function() {
-		return this.getHighlightable();
+		return this.highlightable;
 	},
 
 	_setState: function(state, value) {
@@ -3056,10 +3072,7 @@ Moobile.Button = new Class({
 
 	options: {
 		className: 'button',
-		styleName: Moobile.ButtonStyle.Default,
-		disabled: false,
-		selected: false,
-		highlighted: false
+		styleName: Moobile.ButtonStyle.Default
 	},
 
 	build: function(element) {
@@ -3074,10 +3087,6 @@ Moobile.Button = new Class({
 		}
 
 		this.label = this.getRoleInstance(label);
-
-		if (this.options.disabled) this.setDisabled(true);
-		if (this.options.selected) this.setSelected(true);
-		if (this.options.highlighted) this.options.setHighlighted(true);
 
 		return this;
 	},
@@ -3407,88 +3416,9 @@ Moobile.Bar = new Class({
 /*
 ---
 
-name: NavigationBar
+name: BarTitle
 
-description: Provide the navigation bar control.
-
-license: MIT-style license.
-
-authors:
-	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
-
-requires:
-	- Bar
-
-provides:
-	- NavigationBar
-
-...
-*/
-
-Moobile.NavigationBar = new Class({
-
-	Extends: Moobile.Bar,
-
-	navigationItem: null,
-
-	build: function(element) {
-
-		this.parent(element);
-
-		var navigationItem = this.getElement('[data-role=navigation-item]');
-		if (navigationItem == null) {
-			navigationItem = new Element('div[data-role=navigation-item]');
-			navigationItem.ingest(this.content);
-			navigationItem.inject(this.content);
-		}
-
-		this.navigationItem = this.getRoleInstance(navigationItem);
-
-		if (this.options.className) {
-			this.element.addClass('navigation-' + this.options.className);
-		}
-
-		return this;
-	},
-
-	setNavigationItem: function(navigationItem) {
-
-		if (this.navigationItem == navigationItem)
-			return this;
-
-		if (navigationItem) {
-
-			if (navigationItem instanceof Element) {
-				navigationItem = new Moobile.NavigationItem(navigationItem);
-			}
-
-			this.replaceChildView(this.navigationItem, navigationItem);
-			this.navigationItem.destroy();
-			this.navigationItem = navigationItem;
-		}
-
-		return this;
-	},
-
-	getNavigationItem: function() {
-		return this.navigationItem;
-	},
-
-	release: function() {
-		this.navigationItem = null;
-		this.parent();
-		return this;
-	}
-
-});
-
-/*
----
-
-name: NavigationItem
-
-description: Provides a container with a title and two buttons for the
-             navigation bar.
+description:
 
 license: MIT-style license.
 
@@ -3499,205 +3429,46 @@ requires:
 	- Control
 
 provides:
-	- NavigationItem
+	- BarTitle
 
 ...
 */
 
-Moobile.NavigationItem = new Class({
+Moobile.BarTitle = new Class({
 
 	Extends: Moobile.Control,
 
-	label: null,
-
-	leftBarButton: null,
-
-	leftBarButtonVisible: true,
-
-	rightBartButton: null,
-
-	rightBarButtonVisible: true,
+	text: null,
 
 	options: {
-		className: 'navigation-item'
+		className: 'bar-title'
 	},
 
 	build: function(element) {
-
 		this.parent(element);
+		this.set('role', 'bar-title');
+		return this;
+	},
 
-		var lBarButton = this.getElement('[data-role=left-bar-button]');
-		var rBarButton = this.getElement('[data-role=right-bar-button]');
+	setText: function(text) {
 
-		var label = this.getElement('[data-role=label]');
-		if (label == null) {
-			label = new Element('div[data-role=label]');
-			label.ingest(this.content);
-			label.inject(this.content);
+		this.destroyChildViews();
+
+		if (this.text) {
+			this.text = '';
 		}
 
-		this.label = this.getRoleInstance(label);
-
-		if (lBarButton) {
-			lBarButton.inject(this.content);
-			lBarButton = this.getRoleInstance(lBarButton);
-			this.setLeftBarButton(lBarButton);
+		if (text) {
+			this.text = text;
 		}
 
-		if (rBarButton) {
-			rBarButton.inject(this.content);
-			rBarButton = this.getRoleInstance(rBarButton);
-			this.setRightBarButton(rBarButton);
-		}
+		this.content.set('html', this.text);
 
 		return this;
 	},
 
-	setLabel: function(label) {
-
-		if (this.label == label)
-			return this;
-
-		this.label.setText(null);
-		this.label.hide();
-
-		if (label) {
-
-			var type = typeOf(label);
-			if (type == 'string') {
-				this.label.setText(label);
-				this.label.show();
-				return this;
-			}
-
-			if (type == 'element') {
-				label = new Moobile.Label(label);
-			}
-
-			this.replaceChildView(this.label, label);
-			this.label.destroy();
-			this.label = label;
-		}
-
-		return this;
-	},
-
-	getLabel: function() {
-		return this.label;
-	},
-
-	setLeftBarButton: function(leftBarButton) {
-
-		if (this.leftBarButton == leftBarButton)
-			return this;
-
-		if (this.leftBarButton) {
-			this.leftBarButton.removeFromParentView();
-			this.leftBarButton.destroy();
-			this.leftBarButton = null;
-		}
-
-		if (leftBarButton) {
-
-			var type = typeOf(leftBarButton);
-			if (type == 'string') {
-				this.leftBarButton = new Moobile.BarButton();
-				this.leftBarButton.setLabel(leftBarButton);
-			} else if (type == 'element') {
-				this.leftBarButton = new Moobile.BarButton(leftBarButton);
-			}
-
-			this.leftBarButton = leftBarButton;
-
-			if (this.options.className) {
-				this.leftBarButton.addClass(this.options.className + '-left-button');
-			}
-
-			this.addChildView(this.leftBarButton, 'before', this.label);
-
-			if (this.leftBarButtonVisible == false) {
-				this.leftBarButton.hide();
-			}
-		}
-
-		return this;
-	},
-
-	getLeftBarButton: function() {
-		return this.leftBarButton;
-	},
-
-	setLeftBarButtonVisible: function(visible) {
-		this.leftBarButtonVisible = visible;
-		if (this.leftBarButton) {
-			this.leftBarButton[visible ? 'show' : 'hide'].call(this.leftBarButton);
-		}
-		return this;
-	},
-
-	isLeftBarButtonVisible: function() {
-		return this.leftBarButtonVisible;
-	},
-
-	setRightBarButton: function(rightBarButton) {
-
-		if (this.rightBarButton == rightBarButton)
-			return this;
-
-		if (this.rightBarButton) {
-			this.rightBarButton.removeFromParentView();
-			this.rightBarButton.destroy();
-			this.rightBarButton = null;
-		}
-
-		if (rightBarButton) {
-
-			var type = typeOf(rightBarButton);
-			if (type == 'string') {
-				this.rightBarButton = new Moobile.BarButton();
-				this.rightBarButton.setLabel(rightBarButton);
-			} else if (type == 'element') {
-				this.rightBarButton = new Moobile.BarButton(rightBarButton);
-			}
-
-			this.rightBarButton = rightBarButton;
-
-			if (this.options.className) {
-				this.rightBarButton.addClass(this.options.className + '-right-button');
-			}
-
-			this.addChildView(this.rightBarButton, 'before', this.label);
-
-			if (this.rightBarButtonVisible == false) {
-				this.rightBarButton.hide();
-			}
-		}
-
-		return this;
-	},
-
-	getRightBarButton: function() {
-		return this.rightBarButton;
-	},
-
-	setRightBarButtonVisible: function(visible) {
-		this.rightBarButtonVisible = visible;
-		if (this.rightBarButton) {
-			this.rightBarButton[visible ? 'show' : 'hide'].call(this.rightBarButton);
-		}
-		return this;
-	},
-
-	isRightBarButtonVisible: function() {
-		return this.rightBarButtonVisible;
-	},
-
-	release: function() {
-		this.label = null;
-		this.leftBarButton = null;
-		this.rightBarButton = null;
-		this.parent();
-		return this;
+	getText: function() {
+		return this.text;
 	}
 
 });
@@ -3817,6 +3588,225 @@ Moobile.BarButton = new Class({
 	options: {
 		className: 'bar-button',
 		styleName: Moobile.BarButtonStyle.Default
+	},
+
+	build: function(element) {
+		this.parent(element);
+		this.set('role', 'bar-button');
+		return this;
+	}
+
+});
+
+/*
+---
+
+name: NavigationBar
+
+description: Provide the navigation bar control.
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Bar
+
+provides:
+	- NavigationBar
+
+...
+*/
+
+Moobile.NavigationBar = new Class({
+
+	Extends: Moobile.Bar,
+
+	title: null,
+
+	leftBarButton: null,
+
+	leftBarButtonVisible: true,
+
+	rightBartButton: null,
+
+	rightBarButtonVisible: true,
+
+	build: function(element) {
+
+		this.parent(element);
+
+		var lBarButton = this.getElement('[data-role=bar-button][data-align=left]');
+		var rBarButton = this.getElement('[data-role=bar-button][data-align=right]');
+
+		var title = this.getElement('[data-role=bar-title]');
+		if (title == null) {
+			title = new Element('div[data-role=bar-title]');
+			title.ingest(this.content);
+			title.inject(this.content);
+		}
+
+		this.title = this.getRoleInstance(title);
+
+		if (lBarButton) {
+			lBarButton.inject(this.content, 'top');
+			lBarButton = this.getRoleInstance(lBarButton);
+			this.setLeftBarButton(lBarButton);
+		}
+
+		if (rBarButton) {
+			rBarButton.inject(this.content);
+			rBarButton = this.getRoleInstance(rBarButton);
+			this.setRightBarButton(rBarButton);
+		}
+
+		if (this.options.className) {
+			this.element.addClass('navigation-' + this.options.className);
+		}
+
+		return this;
+	},
+
+	setTitle: function(title) {
+
+		if (this.title == title)
+			return this;
+
+		this.title.setText(null);
+		this.title.hide();
+
+		if (title) {
+
+			var type = typeOf(title);
+			if (type == 'string') {
+				this.title.setText(title);
+				this.title.show();
+				return this;
+			}
+
+			if (type == 'element') {
+				title = new Moobile.BarTitle(title);
+			}
+
+			this.replaceChildView(this.title, title);
+			this.title.destroy();
+			this.title = title;
+		}
+
+		return this;
+	},
+
+	getTitle: function() {
+		return this.title;
+	},
+
+	setLeftBarButton: function(leftBarButton) {
+
+		if (this.leftBarButton == leftBarButton)
+			return this;
+
+		if (this.leftBarButton) {
+			this.leftBarButton.removeFromParentView();
+			this.leftBarButton.destroy();
+			this.leftBarButton = null;
+		}
+
+		if (leftBarButton) {
+
+			var type = typeOf(leftBarButton);
+			if (type == 'string') {
+				this.leftBarButton = new Moobile.BarButton();
+				this.leftBarButton.setLabel(leftBarButton);
+			} else if (type == 'element') {
+				this.leftBarButton = new Moobile.BarButton(leftBarButton);
+			}
+
+			this.leftBarButton = leftBarButton;
+			this.leftBarButton.set('data-align', 'left');
+
+			this.addChildView(this.leftBarButton, 'before', this.title);
+
+			if (this.leftBarButtonVisible == false) {
+				this.leftBarButton.hide();
+			}
+		}
+
+		return this;
+	},
+
+	getLeftBarButton: function() {
+		return this.leftBarButton;
+	},
+
+	setLeftBarButtonVisible: function(visible) {
+		this.leftBarButtonVisible = visible;
+		if (this.leftBarButton) {
+			this.leftBarButton[visible ? 'show' : 'hide'].call(this.leftBarButton);
+		}
+		return this;
+	},
+
+	isLeftBarButtonVisible: function() {
+		return this.leftBarButtonVisible;
+	},
+
+	setRightBarButton: function(rightBarButton) {
+
+		if (this.rightBarButton == rightBarButton)
+			return this;
+
+		if (this.rightBarButton) {
+			this.rightBarButton.removeFromParentView();
+			this.rightBarButton.destroy();
+			this.rightBarButton = null;
+		}
+
+		if (rightBarButton) {
+
+			var type = typeOf(rightBarButton);
+			if (type == 'string') {
+				this.rightBarButton = new Moobile.BarButton();
+				this.rightBarButton.setLabel(rightBarButton);
+			} else if (type == 'element') {
+				this.rightBarButton = new Moobile.BarButton(rightBarButton);
+			}
+
+			this.rightBarButton = rightBarButton;
+			this.rightBarButton.set('data-align', 'right');
+
+			this.addChildView(this.rightBarButton, 'before', this.title);
+
+			if (this.rightBarButtonVisible == false) {
+				this.rightBarButton.hide();
+			}
+		}
+
+		return this;
+	},
+
+	getRightBarButton: function() {
+		return this.rightBarButton;
+	},
+
+	setRightBarButtonVisible: function(visible) {
+		this.rightBarButtonVisible = visible;
+		if (this.rightBarButton) {
+			this.rightBarButton[visible ? 'show' : 'hide'].call(this.rightBarButton);
+		}
+		return this;
+	},
+
+	isRightBarButtonVisible: function() {
+		return this.rightBarButtonVisible;
+	},
+
+	release: function() {
+		this.title = null;
+		this.leftBarButton = null;
+		this.rightBarButton = null;
+		this.parent();
+		return this;
 	}
 
 });
@@ -3866,7 +3856,7 @@ Moobile.Slider = new Class({
 	thumb: null,
 
 	options: {
-		className: 'slider',
+		className: 'slider-view',
 		snap: false,
 		mode: 'horizontal',
 		min: 0,
@@ -4064,7 +4054,7 @@ Moobile.List = new Class({
 
 	setSelectedItem: function(selectedItem) {
 
-		if (selectedItem.isSelectable() == false)
+		if (selectedItem && selectedItem.isSelectable() == false)
 			return this;
 
 		if (this.selectedItem == selectedItem)
@@ -4088,12 +4078,7 @@ Moobile.List = new Class({
 	},
 
 	setSelectedItemIndex: function(index) {
-
-		var selectedItem = this.childViews[index];
-		if (selectedItem) {
-			this.setSelectedItem(selectedItem);
-		}
-
+		this.setSelectedItem(this.childViews[index] || null);
 		return this;
 	},
 
@@ -4148,14 +4133,14 @@ Moobile.List = new Class({
 
 	onItemMouseUp: function(e) {
 		var item = e.target;
-		if (this.selectable) item.setHighlighted(false);
+		if (this.selectable && this.highlightable) item.setHighlighted(false);
 		this.fireEvent('mouseup', e);
 		return this;
 	},
 
 	onItemMouseDown: function(e) {
 		var item = e.target;
-		if (this.selectable) item.setHighlighted(true);
+		if (this.selectable && this.highlightable) item.setHighlighted(true);
 		this.fireEvent('mousedown', e);
 		return this;
 	}
@@ -4232,7 +4217,7 @@ Moobile.ListItemStyle = {
 		},
 
 		onDetach: function() {
-			var element = this.getElement('div..list-item-active-indicator');
+			var element = this.getElement('div.list-item-active-indicator');
 			if (element) {
 				element.destroy();
 			}
@@ -4284,6 +4269,8 @@ Moobile.ListItem = new Class({
 	build: function(element) {
 
 		this.parent(element);
+
+		this.set('role', 'list-item');
 
 		var label = this.getElement('[data-role=label]');
 		var image = this.getElement('[data-role=image]');
@@ -4504,7 +4491,7 @@ authors:
 	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
 
 requires:
-	- Control
+	- View
 
 provides:
 	- Image
@@ -4524,7 +4511,7 @@ Moobile.Image = new Class({
 
 	build: function(element) {
 
-		this.element = document.id(element) || new Element('div');
+		this.parent(element);
 
 		this.element.set('role', 'image');
 
@@ -4532,17 +4519,10 @@ Moobile.Image = new Class({
 		if (image == null) {
 			image = new Element('img')
 			image.hide();
-			image.inject(this.element);
+			image.inject(this.content);
 		}
 
 		this.image = image;
-
-		var className = this.options.className;
-		if (className) {
-			this.element.addClass(className);
-		}
-
-		this.content = this.element;
 
 		return this;
 	},
@@ -4562,10 +4542,6 @@ Moobile.Image = new Class({
 
 	getImage: function() {
 		return this.image.get('src');
-	},
-
-	getContent: function() {
-		throw new Error('The content property is not available in this type of view.')
 	}
 
 });
@@ -4583,7 +4559,7 @@ authors:
 	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
 
 requires:
-	- Control
+	- View
 
 provides:
 	- Label
@@ -4603,25 +4579,18 @@ Moobile.Label = new Class({
 
 	build: function(element) {
 
-		this.element = document.id(element) || new Element('div');
+		this.parent(element);
 
 		this.element.set('role', 'label');
 
 		var text = this.getElement('[data-role=text]');
 		if (text == null) {
 			text = new Element('span[data-role=text]');
-			text.ingest(this.element);
-			text.inject(this.element);
+			text.ingest(this.content);
+			text.inject(this.content);
 		}
 
 		this.text = text;
-
-		var className = this.options.className;
-		if (className) {
-			this.element.addClass(className);
-		}
-
-		this.content = this.element;
 
 		return this;
 	},
@@ -4641,10 +4610,226 @@ Moobile.Label = new Class({
 
 	getText: function() {
 		return this.text.get('html');
+	}
+
+});
+
+/*
+---
+
+name: Mask
+
+description: Creates a mask over the entire app.
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- View
+
+provides:
+	- Mask
+
+...
+*/
+
+Moobile.Mask = new Class({
+
+	Extends: Moobile.View,
+
+	options: {
+		className: 'mask'
 	},
 
-	getContent: function() {
-		throw new Error('The content property is not available in this type of view.')
+	attachEvents: function() {
+		this.element.addEvent('transitionend', this.bound('onTransitionEnd'));
+		this.parent();
+		return this;
+	},
+
+	detachEvents: function() {
+		this.element.removeEvent('transitionend', this.bound('onTransitionEnd'));
+		this.parent();
+		return this;
+	},
+
+	show: function() {
+		this.element.addClass.delay(5, this.element, 'visible');
+		return this;
+	},
+
+	hide: function() {
+		this.element.removeClass.delay(5, this.element, 'visible');
+		return this;
+	},
+
+	onTransitionEnd: function(e) {
+		var opacity = this.element.getStyle('opacity');
+		if (opacity == 0) {
+			this.didHide();
+			this.fireEvent('hide');
+		} else {
+			this.didShow();
+			this.fireEvent('show');
+		}
+		return this;
+	}
+
+});
+
+
+/*
+---
+
+name: Alert
+
+description: Provide an alert message box.
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Control
+	- AlertStyle
+
+provides:
+	- Alert
+
+...
+*/
+
+Moobile.Alert = new Class({
+
+	Extends: Moobile.View,
+
+	options: {
+		className: 'alert',
+		buttonLabel: 'OK',
+		buttonLayout: 'vertical'
+	},
+
+	mask: null,
+
+	header: null,
+
+	footer: null,
+
+	buttons: [],
+
+	build: function(element) {
+
+		this.parent(element);
+
+		this.set('role', 'dialog');
+
+		this.header = new Element('div');
+		this.header.inject(this.element, 'top');
+
+		this.footer = new Element('div');
+		this.footer.inject(this.element, 'bottom');
+
+		if (this.options.className) {
+			this.header.addClass(this.options.className + '-header');
+			this.footer.addClass(this.options.className + '-footer');
+			this.element.addClass(this.options.className + '-' + this.options.buttonLayout);
+		}
+
+		return this;
+	},
+
+	setTitle: function(title) {
+		this.header.empty();
+		this.header.set('html', title);
+		return this;
+	},
+
+	setMessage: function(message) {
+		this.content.empty();
+		this.content.set('html', message);
+		return this;
+	},
+
+	addButton: function(button) {
+
+		button.addEvent('click', this.bound('onButtonClick'));
+
+		this.buttons.push(button);
+
+		this.addChildView(button, 'bottom', this.footer);
+
+		return this;
+	},
+
+	present: function() {
+
+		if (this.buttons.length == 0) {
+			var dismissButton = new Moobile.Button();
+			dismissButton.setLabel(this.options.buttonLabel);
+			dismissButton.setHighlighted(true);
+			this.addButton(dismissButton);
+		}
+
+		this.mask = new Moobile.Mask();
+
+		Moobile.Window.getInstance().addChildView(this.mask);
+
+		this.mask.addChildView(this);
+		this.mask.show();
+
+
+		this.element.addEvent('animationend:once', this.bound('onPresentAnimationComplete'));
+		this.element.addClass('present');
+
+		return this;
+	},
+
+	dismiss: function() {
+
+		this.mask.hide();
+		this.mask.addEvent('hide', this.bound('onMaskHide'));
+
+		this.element.addEvent('animationend:once', this.bound('onDismissAnimationComplete'));
+		this.element.addClass('dismiss');
+
+		return this;
+	},
+
+	onPresentAnimationComplete: function() {
+		this.fireEvent('present');
+		return this;
+	},
+
+	onDismissAnimationComplete: function() {
+
+		this.removeFromParentView();
+
+		this.fireEvent('dismiss');
+
+		return this;
+	},
+
+	onButtonClick: function(e) {
+
+		this.fireEvent('buttonclick', e.target);
+
+		if (this.buttons.length == 1) {
+			this.dismiss();
+		}
+
+		return this;
+	},
+
+	onMaskHide: function() {
+
+		this.removeFromParentView();
+
+		this.mask.destroy();
+		this.mask = null;
+
 	}
 
 });
@@ -4672,28 +4857,22 @@ provides:
 
 Moobile.View.Roles = {
 
-	view: {
-		stop: true,
-		apply: function() {
-			var n = this.get('name');
-			var o = this.get('options');
-			var c = this.get('data-view') || Moobile.View;
-			return Class.instanciate(c, this, o, n);
-		},
-		onAttach: function() {},
-		onDetach: function() {}
+	text: {
+		stop: false
 	},
 
-	control: {
-		stop: true,
-		apply: function() {
-			var n = this.get('name');
-			var o = this.get('options');
-			var c = this.get('data-control') || Moobile.Control;
-			return Class.instanciate(c, this, o, n);
-		},
-		onAttach: function() {},
-		onDetach: function() {}
+	content: {
+		stop: false,
+		onAttach: function() {
+			this.addClass('content');
+		}
+	},
+
+	wrapper: {
+		stop: false,
+		onDetach: function() {
+			this.addClass('wrapper');
+		}
 	},
 
 	label: {
@@ -4703,9 +4882,7 @@ Moobile.View.Roles = {
 			var o = this.get('options');
 			var c = this.get('data-label') || Moobile.Label;
 			return Class.instanciate(c, this, o, n);
-		},
-		onAttach: function() {},
-		onDetach: function() {}
+		}
 	},
 
 	image: {
@@ -4715,52 +4892,57 @@ Moobile.View.Roles = {
 			var o = this.get('options');
 			var c = this.get('data-image') || Moobile.Image;
 			return Class.instanciate(c, this, o, n);
-		},
-		onAttach: function() {},
-		onDetach: function() {}
+		}
 	},
 
-	'navigation-item': {
+	view: {
 		stop: true,
 		apply: function() {
 			var n = this.get('name');
 			var o = this.get('options');
-			var c = this.get('data-navigation-item') || Moobile.NavigationItem;
+			var c = this.get('data-view') || Moobile.View;
 			return Class.instanciate(c, this, o, n);
-		},
-		onAttach: function() {},
-		onDetach: function() {}
+		}
 	},
 
-	'left-bar-button': {
+	control: {
 		stop: true,
 		apply: function() {
 			var n = this.get('name');
 			var o = this.get('options');
-			var c = this.get('data-left-bar-button') || Moobile.BarButton;
+			var c = this.get('data-control') || Moobile.Control;
 			return Class.instanciate(c, this, o, n);
-		},
-		onAttach: function() {},
-		onDetach: function() {}
+		}
 	},
 
-	'right-bar-button': {
+	'list-item': {
 		stop: true,
 		apply: function() {
 			var n = this.get('name');
 			var o = this.get('options');
-			var c = this.get('data-right-bar-button') || Moobile.BarButton;
+			var c = this.get('data-list-item') || Moobile.ListItem;
 			return Class.instanciate(c, this, o, n);
-		},
-		onAttach: function() {},
-		onDetach: function() {}
+		}
 	},
 
-	'content': {
-		stop: false,
-		apply: function() {},
-		onAttach: function() {},
-		onDetach: function() {}
+	'bar-title': {
+		stop: true,
+		apply: function() {
+			var n = this.get('name');
+			var o = this.get('options');
+			var c = this.get('data-bar-title') || Moobile.BarTitle;
+			return Class.instanciate(c, this, o, n);
+		}
+	},
+
+	'bar-button': {
+		stop: true,
+		apply: function() {
+			var n = this.get('name');
+			var o = this.get('options');
+			var c = this.get('data-bar-button') || Moobile.BarButton;
+			return Class.instanciate(c, this, o, n);
+		}
 	}
 
 };
@@ -4824,9 +5006,9 @@ Moobile.ScrollView = new Class({
 
 		this.parent(element);
 
-		var wrapper = this.getElement('[data-role=content-wrapper]');
+		var wrapper = this.getElement('[data-role=wrapper]');
 		if (wrapper == null) {
-			wrapper = new Element('div[data-role=content-wrapper]');
+			wrapper = new Element('div[data-role=wrapper]');
 			wrapper.wraps(this.content);
 		}
 
@@ -4834,7 +5016,7 @@ Moobile.ScrollView = new Class({
 
 		if (this.options.className) {
 			this.element.addClass('scroll-' + this.options.className);
-			this.wrapper.addClass('scroll-' + this.options.className + '-content-wrapper');
+			this.wrapper.addClass('scroll-' + this.options.className + '-wrapper');
 		}
 
 		return this;
@@ -5067,21 +5249,21 @@ provides:
 
 (function() {
 
-	iScroll.prototype._currentSize = {x: 0, y: 0};
+iScroll.prototype._currentSize = {x: 0, y: 0};
 
-	var _checkDOMChanges = iScroll.prototype._checkDOMChanges;
+var _checkDOMChanges = iScroll.prototype._checkDOMChanges;
 
-	iScroll.prototype._checkDOMChanges = function() {
+iScroll.prototype._checkDOMChanges = function() {
 
-		_checkDOMChanges.call(this);
+	_checkDOMChanges.call(this);
 
-		var size = this.wrapper.getSize();
-		if (this._currentSize.x != size.x || this._currentSize.y != size.y) {
-			this._currentSize = size;
-			this.refresh();
-		}
+	var size = this.wrapper.getSize();
+	if (this._currentSize.x != size.x || this._currentSize.y != size.y) {
+		this._currentSize = size;
+		this.refresh();
+	}
 
-	};
+};
 
 })();
 
@@ -5118,11 +5300,9 @@ Moobile.Scroller = new Class({
 		content = content || null;
 
 		if (content == null) {
-			content = wrapper.getElement('[data-role=content]');
-			if (content == null) {
-				content.elements = wrapper.elements;
-				content.inject(wrapper);
-			}
+			content = new Element('div')
+			content.ingest(wrapper);
+			content.inject(wrapper);
 		}
 
 		this.content = content;
@@ -5228,6 +5408,89 @@ Moobile.Scroller = new Class({
 
 	onScrollEnd: function() {
 		this.fireEvent('scrollend');
+		return this;
+	}
+
+});
+
+/*
+---
+
+name: Scroller.Carousel
+
+description: Creates snap to element carousel.
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Scroller
+
+provides:
+	- Scroller.Carousel
+
+...
+*/
+
+Moobile.Scroller.Carousel = new Class({
+
+	Extends: Moobile.Scroller,
+
+	elements: [],
+
+	options: {
+		layout: 'horizontal',
+		momentum: false,
+		hScrollbar: false,
+		vScrollbar: false,
+		snap: true,
+		snapThreshold: 40
+	},
+
+	initialize: function(wrapper, content, options) {
+
+		this.parent(wrapper, content, options);
+
+		this.wrapper.addClass('carousel');
+		this.wrapper.addClass('carousel-' + this.options.layout);
+
+		this.elements = this.content.getElements('>');
+		this.elements.addClass('slide');
+
+		this.update();
+
+		return this;
+	},
+
+	update: function() {
+
+		var size = null;
+		var style = null;
+
+		switch (this.options.layout) {
+			case 'horizontal':
+				size = this.wrapper.getSize().x;
+				style = 'width';
+				break;
+			case 'vertical':
+				size = this.wrapper.getSize().y;
+				style = 'height';
+				break;
+		}
+
+		this.elements.setStyle(style, 100 / this.elements.length + '%');
+		this.content.setStyle(style, 100 * this.elements.length + '%');
+
+		this.scroller.options.snapThreshold = size * this.options.snapThreshold / 100;
+
+		return this;
+	},
+
+	onRefresh: function() {
+		this.parent();
+		this.update();
 		return this;
 	}
 
@@ -5769,7 +6032,7 @@ Moobile.ViewController = new Class({
 
 		this.setOptions(options);
 
-		this.name = name || String.uniqueID();
+		this.name = name || null;
 
 		var element = document.id(source);
 		if (element) {
@@ -6402,7 +6665,7 @@ Moobile.ViewControllerStack.Navigation = new Class({
 	Extends: Moobile.ViewControllerStack,
 
 	options: {
-		back: true
+		showBackButton: true
 	},
 
 	willAddChildViewController: function(viewController) {
@@ -6411,21 +6674,16 @@ Moobile.ViewControllerStack.Navigation = new Class({
 
 		var view = viewController.getView();
 
-		var navigationItem = null;
 		var navigationBar = view.getChildView('navigation-bar');
 		if (navigationBar == null) {
 			navigationBar = new Moobile.NavigationBar(null, null, 'navigation-bar');
-			navigationItem = new Moobile.NavigationItem();
-			navigationBar.setNavigationItem(navigationItem);
 			view.addChildView(navigationBar, 'header');
-		} else {
-			navigationItem = navigationBar.getNavigationItem();
 		}
 
-		if (viewController.isModal() || !this.childViewControllers.length)
+		if (viewController.isModal() || this.childViewControllers.length == 0)
 			return this;
 
-		if (this.options.back) {
+		if (this.options.showBackButton) {
 
 			var title = this.topViewController.getTitle();
 			if (title) {
@@ -6435,9 +6693,8 @@ Moobile.ViewControllerStack.Navigation = new Class({
 				backButton.setLabel(title);
 				backButton.addEvent('click', this.bound('onBackButtonClick'));
 
-				navigationItem.setLeftBarButton(backButton);
+				navigationBar.setLeftBarButton(backButton);
 			}
-
 		}
 
 		return this;
@@ -6453,11 +6710,7 @@ Moobile.ViewControllerStack.Navigation = new Class({
 
 		var title = viewController.getTitle();
 		if (title) {
-
-			var navigationItem = navigationBar.getNavigationItem();
-			if (navigationItem) {
-				navigationItem.setLabel(title)
-			}
+			navigationBar.setTitle(title)
 		}
 
 		return this;
@@ -6508,7 +6761,7 @@ Moobile.ViewControllerPanel = new Class({
 
 		this.mainViewController = mainViewController;
 
-		this.addChildViewController(this.mainViewController);
+		this.addChildViewController(this.mainViewController, 'top', this.view.getMainPanel());
 
 		return this;
 	},
@@ -6574,6 +6827,10 @@ provides:
 
 if (!window.$moobile) window.$moobile = {};
 
+(function() {
+
+var instance = null;
+
 Moobile.Window = new Class({
 
 	Extends: Moobile.View,
@@ -6592,6 +6849,20 @@ Moobile.Window = new Class({
 		showLoadingIndicatorDelay: 0
 	},
 
+	initialize: function(element, options, name) {
+
+		this.parent(element, options, name);
+
+		if (instance == null) {
+			instance = this;
+			return this;
+		}
+
+		throw new Error('Only one window instance is allowed.');
+
+		return this;
+	},
+
 	startup: function() {
 
 		window.$moobile.window = this;
@@ -6600,7 +6871,6 @@ Moobile.Window = new Class({
 			return this;
 
 		this.ready = true;
-
 		this.init();
 		this.attachEvents();
 
@@ -6615,23 +6885,24 @@ Moobile.Window = new Class({
 			return this;
 
 		this.ready = false;
-
 		this.detachEvents();
 		this.release();
+
+		instance = null;
 
 		return this;
 	},
 
 	attachEvents: function() {
-		window.addEvent('orientationchange', this.bound('onWindowOrientationChange'));
 		window.addEvent('load', this.bound('onWindowLoad'));
+		window.addEvent('orientationchange', this.bound('onWindowOrientationChange'));
 		this.parent();
 		return this;
 	},
 
 	detachEvents: function() {
-		window.removeEvent('orientationchange', this.bound('onWindowOrientationChange'));
 		window.removeEvent('load', this.bound('onWindowLoad'));
+		window.removeEvent('orientationchange', this.bound('onWindowOrientationChange'));
 		this.parent();
 		return this;
 	},
@@ -6726,11 +6997,19 @@ Moobile.Window = new Class({
 	onWindowLoad: function(e) {
 		this.position.delay(250);
 		return this;
-	},
-
-
+	}
 
 });
+
+Moobile.Window.extend({
+
+	getInstance: function() {
+		return instance;
+	}
+
+});
+
+})();
 
 /*
 ---

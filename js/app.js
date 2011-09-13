@@ -1,6 +1,7 @@
 var KitchenSink =  {
 	ViewController: {
-		Control: {}
+		Control: {},
+		Carousel: {}
 	}
 };
 
@@ -41,6 +42,9 @@ KitchenSink.ViewController.Navigation = new Class({
 				break;
 			case 'control':
 				viewController = new KitchenSink.ViewController.Navigation.Control('views/navigation/control.html');
+				break;
+			case 'carousel':
+				viewController = new KitchenSink.ViewController.Navigation.Carousel('views/navigation/carousel.html');
 				break;
 		}
 
@@ -172,6 +176,65 @@ KitchenSink.ViewController.Navigation.Control = new Class({
 					viewController = new KitchenSink.ViewController.Control.Slider('views/control/slider.html');
 					break;
 
+				case 'alert':
+					viewController = new KitchenSink.ViewController.Control.Alert('views/control/alert.html');
+					break;
+
+			}
+
+			this.viewControllers[item.name] = viewController;
+		}
+
+		if (viewController) {
+			this.viewControllerPanel.getMainViewController().pushViewController(viewController);
+		}
+
+		return this;
+	}
+
+});
+
+KitchenSink.ViewController.Navigation.Carousel = new Class({
+
+	Extends: Moobile.ViewController,
+
+	list: null,
+
+	viewControllers: {},
+
+	init: function() {
+		this.title = 'Carousel';
+		this.list = this.view.getList();
+		return this;
+	},
+
+	attachEvents: function() {
+		this.list.addEvent('select', this.bound('onListSelect'));
+		this.parent();
+		return this;
+	},
+
+	detachEvents: function() {
+		this.list.removeEvent('select', this.bound('onListSelect'));
+		this.parent();
+		return this;
+	},
+
+	onListSelect: function(item) {
+
+		var viewController = this.viewControllers[item.getName()];
+		if (viewController == undefined) {
+
+			switch (item.getName()) {
+
+				case 'vertical':
+					viewController = new KitchenSink.ViewController.Carousel.Vertical('views/carousel/vertical.html');
+					break;
+
+				case 'horizontal':
+					viewController = new KitchenSink.ViewController.Carousel.Horizontal('views/carousel/horizontal.html');
+					break;
+
 			}
 
 			this.viewControllers[item.name] = viewController;
@@ -199,6 +262,9 @@ KitchenSink.ViewController.Transition = new Class({
 		if (title) {
 			title.set('html', this.title);
 		}
+		title.addEvent('click', function() {
+			this.viewControllerStack.popViewController();
+		}.bind(this));
 	}
 
 });
@@ -248,6 +314,135 @@ KitchenSink.ViewController.Control.Slider = new Class({
 
 });
 
+KitchenSink.ViewController.Control.Alert = new Class({
+
+	Extends: Moobile.ViewController,
+
+	alert: null,
+
+	prompt: null,
+
+	confirm: null,
+
+	init: function() {
+		this.title = 'Alert';
+
+		this.alert = this.view.getAlert();
+		this.prompt = this.view.getPrompt();
+		this.confirm = this.view.getConfirm();
+
+		return this;
+	},
+
+	attachEvents: function() {
+		this.alert.addEvent('click', this.bound('onButtonClick'));
+		this.prompt.addEvent('click', this.bound('onButtonClick'));
+		this.confirm.addEvent('click', this.bound('onButtonClick'));
+		return this;
+	},
+
+	detachEvents: function() {
+		this.alert.removeEvent('click', this.bound('onButtonClick'));
+		this.prompt.removeEvent('click', this.bound('onButtonClick'));
+		this.confirm.removeEvent('click', this.bound('onButtonClick'));
+	},
+
+	onButtonClick: function(e) {
+
+		switch (e.target.getName()) {
+
+			case 'alert':
+				var alert = new Moobile.Alert();
+				alert.setTitle('Alert Title');
+				alert.setMessage('This is the alert message content');
+				alert.present();
+				break;
+
+			case 'confirm':
+
+				var confirm = new Moobile.Alert(null, {buttonLayout:'horizontal'});
+				confirm.setTitle('Alert Title');
+				confirm.setMessage('This is the alert message content');
+
+				var yes = new Moobile.Button();
+				yes.setLabel('Yep');
+				confirm.addButton(yes);
+
+				var no = new Moobile.Button();
+				no.setLabel('Nope');
+				confirm.addButton(no);
+
+				confirm.addEvent('buttonclick', function(button) {
+
+
+
+					if (button == yes) {
+						var alert1 = new Moobile.Alert();
+						alert1.setTitle('Good!');
+						alert1.setMessage('You clicked yes');
+						alert1.present();
+					}
+
+					if (button == no) {
+						var alert2 = new Moobile.Alert();
+						alert2.setTitle('Good!');
+						alert2.setMessage('You clicked no');
+						alert2.present();
+					}
+
+					confirm.dismiss();
+
+				});
+
+				confirm.present();
+
+				break;
+
+			case 'prompt':
+
+				break;
+
+		}
+	}
+
+});
+
+
+/**
+ * Carousel
+ */
+
+KitchenSink.ViewController.Carousel.Vertical = new Class({
+
+	Extends: Moobile.ViewController,
+
+	init: function() {
+		this.title = 'Vertical Carousel';
+
+		var wrapper = this.view.getElement('.carousel');
+		var content = this.view.getElement('.carousel ul');
+
+		new Moobile.Scroller.Carousel(wrapper, content, {
+			layout: 'vertical'
+		});
+	}
+
+});
+
+KitchenSink.ViewController.Carousel.Horizontal = new Class({
+
+	Extends: Moobile.ViewController,
+
+	init: function() {
+		this.title = 'Horizontal Carousel';
+
+		var wrapper = this.view.getElement('.carousel');
+		var content = this.view.getElement('.carousel ul');
+
+		new Moobile.Scroller.Carousel(wrapper, content);
+	}
+
+});
 
 KitchenSink.ViewController.Welcome = new Class({
 

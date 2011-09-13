@@ -1,7 +1,8 @@
 /* Welcome View
 -----------------------------------------------------------------------------*/
 
-.welcome-view .view-content {
+.welcome-view > .content,
+.welcome-view > .wrapper > .content{
 	padding: 25px;
 }
 
@@ -15,7 +16,8 @@
 /* Transition View
 -----------------------------------------------------------------------------*/
 
-.transition-view .view-content {
+.transition-view > .content,
+.transition-view > .wrapper > .content {
 	padding: 25px;
 }
 
@@ -44,4 +46,79 @@
 
 .control-list-view .list {
 	margin-bottom: 12px;
+}
+
+/* Carousel View
+-----------------------------------------------------------------------------*/
+
+.carousel-view .carousel .slide .box {
+	-webkit-border-radius: 25px;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	background: rgba(255, 255, 255, 0.5);
+	display: -webkit-box;
+	font-size: 28px;
+	font-weight: normal;
+	padding: 25px;
+	text-align: center;
+}
+
+/* Carousel Horizontal View
+-----------------------------------------------------------------------------*/
+
+.carousel-horizontal-view .carousel {
+	-webkit-box-flex: 1;
+	-webkit-box-orient: vertical;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	display: -webkit-box;
+}
+
+.carousel-horizontal-view .carousel > * {
+	-webkit-box-flex: 1;
+	-webkit-box-orient: horizontal;
+	display: -webkit-box;
+}
+
+.carousel-horizontal-view .carousel .slide {
+	-webkit-box-flex: 1;
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	padding: 25px;
+}
+
+.carousel-horizontal-view .carousel .slide .box {
+	-webkit-box-flex: 1;
+}
+
+/* Carousel Vertical View
+-----------------------------------------------------------------------------*/
+
+.carousel-vertical-view > .content {
+	-webkit-box-flex: 1;
+	height: 100%;
+}
+
+.carousel-vertical-view .carousel {
+	-webkit-box-flex: 0;
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	height: 100%;
+}
+
+.carousel-vertical-view .carousel > * {
+	-webkit-box-flex: 0;
+	-webkit-box-orient: block-axis;
+	display: -webkit-box;
+	height: 100%;
+}
+
+.carousel-vertical-view .carousel .slide {
+	-webkit-box-orient: horizontal;
+	display: -webkit-box;
+	padding: 25px;
+}
+
+.carousel-vertical-view .carousel .slide .box {
+	-webkit-box-flex: 1;
 }

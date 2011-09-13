@@ -136,3 +136,9 @@
 	-webkit-box-shadow: 0px 1px 1px 0px #ffffff;
 }
 
+/* Mask
+-----------------------------------------------------------------------------*/
+
+.mask {
+    background: -webkit-gradient(radial, center center, 0, center center, 500, from(rgba(0, 0, 0, 0.10)), to(rgba(0, 0, 0, 0.30)));
+}
