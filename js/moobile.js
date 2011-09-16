@@ -3856,7 +3856,7 @@ Moobile.Slider = new Class({
 	thumb: null,
 
 	options: {
-		className: 'slider-view',
+		className: 'slider',
 		snap: false,
 		mode: 'horizontal',
 		min: 0,
@@ -4754,13 +4754,9 @@ Moobile.Alert = new Class({
 	},
 
 	addButton: function(button) {
-
 		button.addEvent('click', this.bound('onButtonClick'));
-
-		this.buttons.push(button);
-
 		this.addChildView(button, 'bottom', this.footer);
-
+		this.buttons.push(button);
 		return this;
 	},
 
@@ -4779,7 +4775,6 @@ Moobile.Alert = new Class({
 
 		this.mask.addChildView(this);
 		this.mask.show();
-
 
 		this.element.addEvent('animationend:once', this.bound('onPresentAnimationComplete'));
 		this.element.addClass('present');
@@ -4804,11 +4799,8 @@ Moobile.Alert = new Class({
 	},
 
 	onDismissAnimationComplete: function() {
-
 		this.removeFromParentView();
-
 		this.fireEvent('dismiss');
-
 		return this;
 	},
 
@@ -4824,12 +4816,9 @@ Moobile.Alert = new Class({
 	},
 
 	onMaskHide: function() {
-
 		this.removeFromParentView();
-
 		this.mask.destroy();
 		this.mask = null;
-
 	}
 
 });
@@ -5351,17 +5340,17 @@ Moobile.Scroller = new Class({
 	},
 
 	scrollTo: function(x, y, time, relative) {
-		this.scroller.scrollTo(x, y, time, relative);
+		(function() { this.scroller.scrollTo(x, y, time, relative); }).delay(5, this);
 		return this;
 	},
 
 	scrollToElement: function(element, time) {
-		this.scroller.scrollToElement(element, time);
+		(function() { this.scroller.scrollToElement(element, time); }).delay(5, this);
 		return this;
 	},
 
 	scrollToPage: function (pageX, pageY, time) {
-		this.scroller.scrollToPage(pageX, pageY, time);
+		(function() { this.scroller.scrollToPage(pageX, pageY, time); }).delay(5, this);
 		return this;
 	},
 
@@ -6107,7 +6096,7 @@ Moobile.ViewController = new Class({
 	},
 
 	setParentViewController: function(parentViewController) {
-		this.parentViewController = this.parentViewController;
+		this.parentViewController = parentViewController;
 		return this;
 	},
 
@@ -6208,10 +6197,10 @@ Moobile.ViewController = new Class({
 		this.modalViewController = viewController;
 		this.modalViewController.modal = true;
 
-		this.addChildViewController(this.modalViewController, 'after', this.view);
+		this.addChildViewController(this.modalViewController, 'bottom', this.window.getContent());
 
 		var viewToShow = this.modalViewController.getView();
-		var viewToHide = this.view;
+		var viewToHide = this.window.getRootView();
 
 		viewTransition = viewTransition || new Moobile.ViewTransition.Cover;
 		viewTransition.addEvent('start:once', this.bound('onPresentTransitionStart'));
@@ -6219,7 +6208,7 @@ Moobile.ViewController = new Class({
 		viewTransition.enter(
 			viewToShow,
 			viewToHide,
-			this.view.getParentView() || this.view.getWindow()
+			this.window
 		);
 
 		this.modalViewController.setViewTransition(viewTransition);
@@ -6245,7 +6234,7 @@ Moobile.ViewController = new Class({
 
 		this.window.disableInput();
 
-		var viewToShow = this.view;
+		var viewToShow = this.window.getRootView();
 		var viewToHide = this.modalViewController.getView();
 
 		var viewTransition = this.modalViewController.viewTransition;
@@ -6254,7 +6243,7 @@ Moobile.ViewController = new Class({
 		viewTransition.leave(
 			viewToShow,
 			viewToHide,
-			this.view.getParentView() || this.view.getWindow()
+			this.window
 		);
 
 		return this;
@@ -6352,6 +6341,10 @@ Moobile.ViewController = new Class({
 		return this.childViewControllers.find(function(viewController) {
 			return viewController.getName() == name;
 		});
+	},
+
+	getChildViewControllers: function() {
+		return this.childViewControllers;
 	},
 
 	removeChildViewController: function(viewController) {
@@ -6914,6 +6907,10 @@ Moobile.Window = new Class({
 	position: function() {
 		window.scrollTo(0, 1);
 		return this;
+	},
+
+	getRootView: function() {
+		return this.childViews[0];
 	},
 
 	getOrientation: function() {

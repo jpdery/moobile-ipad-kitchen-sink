@@ -66,6 +66,14 @@
 /* Carousel Horizontal View
 -----------------------------------------------------------------------------*/
 
+.carousel-horizontal-view .navigation-bar {
+	position: absolute;
+	top: 0px;
+}
+.carousel-horizontal-view {
+	padding-top: 44px;
+}
+
 .carousel-horizontal-view .carousel {
 	-webkit-box-flex: 1;
 	-webkit-box-orient: vertical;
@@ -93,6 +101,15 @@
 
 /* Carousel Vertical View
 -----------------------------------------------------------------------------*/
+
+.carousel-vertical-view .navigation-bar {
+	position: absolute;
+	top: 0px;
+}
+
+.carousel-vertical-view {
+	padding-top: 44px;
+}
 
 .carousel-vertical-view > .content {
 	-webkit-box-flex: 1;
