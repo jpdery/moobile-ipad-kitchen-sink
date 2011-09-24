@@ -1,8 +1,33 @@
-/* Welcome View
+/* Box
 -----------------------------------------------------------------------------*/
 
-.welcome-view > .content,
-.welcome-view > .wrapper > .content{
+.box {
+	-webkit-border-radius: 25px;
+	-webkit-box-sizing: border-box;
+	-webkit-box-flex: 1;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	background: rgba(255, 255, 255, 0.5);
+	display: -webkit-box;
+	font-size: 17px;
+	font-weight: normal;
+	padding: 25px;
+	position: relative;	
+	text-align: center;
+	text-shadow: 0px 1px 0px #ffffff;
+}
+
+.box h1 {
+	font-size: 28px;
+	font-weight: normal;
+	text-align: center;
+}
+
+/* Content View (Applied to multiple views)
+-----------------------------------------------------------------------------*/
+
+.content-view > .content ,
+.content-view > .wrapper > .content {
 	padding: 25px;
 }
 
@@ -13,68 +38,43 @@
 	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #c1c5cc), color-stop(1, #e8eaed));
 }
 
-/* Transition View
+/* Scroller View
 -----------------------------------------------------------------------------*/
 
-.transition-view > .content,
-.transition-view > .wrapper > .content {
-	padding: 25px;
+.scroller-view .box {
+	bottom: 25px;
+	position: absolute;
+	top: 25px;
+	right: 25px;
+	left: 25px;
 }
 
-.transition-view-title {
-	-webkit-border-radius: 25px;
+/* Scroll View Min View
+-----------------------------------------------------------------------------*/
+
+.scroll-view-min-view .box {
 	-webkit-box-flex: 1;
-	-webkit-box-align: center;
-	-webkit-box-pack: center;
-	background: rgba(255, 255, 255, 0.5);
-	display: -webkit-box;
-	font-size: 28px;
-	font-weight: normal;
-	padding: 25px;
-	text-align: center;
 }
 
-/* Control View
+/* Scroll View Max View
 -----------------------------------------------------------------------------*/
 
-.control-view .view-content {
-	padding: 25px;
-}
-
-/* Control List View
------------------------------------------------------------------------------*/
-
-.control-list-view .list {
-	margin-bottom: 12px;
-}
-
-/* Carousel View
------------------------------------------------------------------------------*/
-
-.carousel-view .carousel .slide .box {
-	-webkit-border-radius: 25px;
-	-webkit-box-align: center;
-	-webkit-box-pack: center;
-	background: rgba(255, 255, 255, 0.5);
-	display: -webkit-box;
-	font-size: 28px;
-	font-weight: normal;
-	padding: 25px;
-	text-align: center;
+.scroll-view-max-view .box {
+	-webkit-box-flex: 1;
 }
 
 /* Carousel Horizontal View
 -----------------------------------------------------------------------------*/
 
-.carousel-horizontal-view .navigation-bar {
+.scroller-carousel-horizontal-view .navigation-bar {
 	position: absolute;
 	top: 0px;
 }
-.carousel-horizontal-view {
+.scroller-carousel-horizontal-view {
 	padding-top: 44px;
 }
 
-.carousel-horizontal-view .carousel {
+.scroller-carousel-horizontal-view .carousel {
 	-webkit-box-flex: 1;
 	-webkit-box-orient: vertical;
 	-webkit-box-align: center;
@@ -82,60 +82,57 @@
 	display: -webkit-box;
 }
 
-.carousel-horizontal-view .carousel > * {
+.scroller-carousel-horizontal-view .carousel > * {
 	-webkit-box-flex: 1;
 	-webkit-box-orient: horizontal;
 	display: -webkit-box;
 }
 
-.carousel-horizontal-view .carousel .slide {
+.scroller-carousel-horizontal-view .carousel .slide {
 	-webkit-box-flex: 1;
 	-webkit-box-orient: vertical;
 	display: -webkit-box;
 	padding: 25px;
 }
 
-.carousel-horizontal-view .carousel .slide .box {
+.scroller-carousel-horizontal-view .carousel .slide .box {
 	-webkit-box-flex: 1;
 }
 
 /* Carousel Vertical View
 -----------------------------------------------------------------------------*/
 
-.carousel-vertical-view .navigation-bar {
+.scroller-carousel-vertical-view .navigation-bar {
 	position: absolute;
 	top: 0px;
 }
 
-.carousel-vertical-view {
+.scroller-carousel-vertical-view {
 	padding-top: 44px;
 }
 
-.carousel-vertical-view > .content {
-	-webkit-box-flex: 1;
-	height: 100%;
-}
-
-.carousel-vertical-view .carousel {
+.scroller-carousel-vertical-view > .content {
 	-webkit-box-flex: 0;
-	-webkit-box-orient: vertical;
-	display: -webkit-box;
 	height: 100%;
 }
 
-.carousel-vertical-view .carousel > * {
+.scroller-carousel-vertical-view .carousel {
+	height: 100%;
+}
+
+.scroller-carousel-vertical-view .carousel > * {
 	-webkit-box-flex: 0;
 	-webkit-box-orient: block-axis;
 	display: -webkit-box;
 	height: 100%;
 }
 
-.carousel-vertical-view .carousel .slide {
+.scroller-carousel-vertical-view .carousel .slide {
 	-webkit-box-orient: horizontal;
 	display: -webkit-box;
 	padding: 25px;
 }
 
-.carousel-vertical-view .carousel .slide .box {
+.scroller-carousel-vertical-view .carousel .slide .box {
 	-webkit-box-flex: 1;
 }

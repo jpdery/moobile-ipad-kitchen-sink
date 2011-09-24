@@ -1,0 +1,34 @@
+name: "Moobile"
+
+exports: "moobile.js"
+
+web: "[mootools.net](http://mootools.net)"
+
+description: "MooTools for mobile devices"
+
+license: "[MIT License](http://mootools.net/license.txt)"
+
+copyright: "&copy; Jean-Philippe Dery (jeanphilippe.dery@gmail.com)"
+
+authors: "Jean-Philippe Dery (jeanphilippe.dery@gmail.com)"
+
+sources:
+
+    - "Source/ViewController/ViewController.Control.Bar.js"
+    - "Source/ViewController/ViewController.Control.Button.js"
+    - "Source/ViewController/ViewController.Control.List.js"
+    - "Source/ViewController/ViewController.Control.Slider.js"  
+    - "Source/ViewController/ViewController.Dialog.Alert.js"
+    - "Source/ViewController/ViewController.Dialog.Modal.js"
+    - "Source/ViewController/ViewController.Navigation.js"
+    - "Source/ViewController/ViewController.Navigation.Control.js"
+    - "Source/ViewController/ViewController.Navigation.Dialog.js"
+    - "Source/ViewController/ViewController.Navigation.Root.js"
+    - "Source/ViewController/ViewController.Navigation.Scroller.js"
+    - "Source/ViewController/ViewController.Navigation.Transition.js"
+    - "Source/ViewController/ViewController.Scroller.CarouselHorizontal.js"
+    - "Source/ViewController/ViewController.Scroller.CarouselVertical.js"
+    - "Source/ViewController/ViewController.Scroller.Scroller.js"
+    - "Source/ViewController/ViewController.Scroller.ScrollView.js"
+    - "Source/ViewController/ViewController.Transition.js"
+    - "Source/ViewController/ViewController.Welcome.js"

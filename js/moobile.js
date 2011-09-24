@@ -2887,6 +2887,18 @@ Moobile.Control = new Class({
 		highlightable: true
 	},
 
+	initialize: function(element, options, name) {
+
+		this.parent(element, options, name);
+
+		var styleName = this.options.styleName;
+		if (styleName) {
+			this.setStyle(styleName);
+		}
+		
+		return this;
+	},
+
 	build: function(element) {
 
 		this.parent(element);
@@ -2899,11 +2911,6 @@ Moobile.Control = new Class({
 
 		if (!this.options.selectable) this.setSelectable(false);
 		if (!this.options.highlightable) this.setHighlightable(false);
-
-		var styleName = this.options.styleName;
-		if (styleName) {
-			this.setStyle(styleName);
-		}
 
 		return this;
 	},
@@ -3637,8 +3644,8 @@ Moobile.NavigationBar = new Class({
 
 		this.parent(element);
 
-		var lBarButton = this.getElement('[data-role=bar-button][data-align=left]');
-		var rBarButton = this.getElement('[data-role=bar-button][data-align=right]');
+		var lBarButton = this.getElement('[data-role=bar-button][data-task=left]');
+		var rBarButton = this.getElement('[data-role=bar-button][data-task=right]');
 
 		var title = this.getElement('[data-role=bar-title]');
 		if (title == null) {
@@ -4208,20 +4215,27 @@ Moobile.ListItemStyle = {
 
 	},
 
-	Active: {
+	Activity: {
 
 		onAttach: function() {
-			var indicator = new Element('div.list-item-active-indicator');
-			indicator.inject(this.content, 'after');
-			return this.addClass('style-active');
+			
+			var activity = this.getElement('div.list-item-activity');
+			if (activity == null) {
+				activity = new Element('div.list-item-activity');
+				activity.inject(this.element);
+			}
+
+			return this.addClass('style-activity');
 		},
 
 		onDetach: function() {
-			var element = this.getElement('div.list-item-active-indicator');
-			if (element) {
-				element.destroy();
+			
+			var activity = this.getElement('div.list-item-activity');
+			if (activity) {
+				activity.destroy();
 			}
-			return this.removeClass('style-active');
+			
+			return this.removeClass('style-activity');
 		}
 
 	}
@@ -4258,6 +4272,8 @@ Moobile.ListItem = new Class({
 
 	image: null,
 
+	accessory: null,
+
 	options: {
 		className: 'list-item'
 	},
@@ -4272,9 +4288,14 @@ Moobile.ListItem = new Class({
 
 		this.set('role', 'list-item');
 
-		var label = this.getElement('[data-role=label]');
-		var image = this.getElement('[data-role=image]');
+		var label = this.getElement('[data-role=label]:not([data-task])');
+		var image = this.getElement('[data-role=image]:not([data-task])');
 
+		var accessory = this.getElement('[data-role=label][data-task=accessory]');
+		if (accessory == null) {
+			accessory = new Element('div[data-role=label][data-task=accessory]');
+		}
+		
 		if (label == null) {
 			label = new Element('div[data-role=label]');
 			label.ingest(this.content);
@@ -4286,10 +4307,12 @@ Moobile.ListItem = new Class({
 
 		image.inject(this.element, 'top');
 		label.inject(this.content, 'top');
+		accessory.inject(this.element);
 
 		this.label = this.getRoleInstance(label);
-		this.image = this.getRoleInstance(image);
-
+		this.image = this.getRoleInstance(image);		
+		this.accessory = this.getRoleInstance(accessory);
+	
 		return this;
 	},
 
@@ -4859,7 +4882,7 @@ Moobile.View.Roles = {
 
 	wrapper: {
 		stop: false,
-		onDetach: function() {
+		onAttach: function() {
 			this.addClass('wrapper');
 		}
 	},
@@ -5712,10 +5735,24 @@ Moobile.ViewTransition.Cover = new Class({
 
 		return this;
 	},
-
+	/*
+	onEnter: function(viewToShow, viewToHide, parentView, first) {
+		
+		this.parent(viewToShow, viewToHide, parentView, first);
+		
+		viewToHide.show();
+		viewToShow.addClass('transition-cover-enter-background-view');
+		viewToShow.addClass('transition-cover-enter-foreground-view');
+		
+		return this;
+	},
+	*/
 	leave: function(viewToShow, viewToHide, parentView) {
 
 		this.parent(viewToShow, viewToHide, parentView);
+
+		viewToShow.removeClass('transition-cover-enter-background-view');
+		viewToShow.removeClass('transition-cover-enter-foreground-view');
 
 		this.addSubject(viewToShow, 'transition-view-to-show');
 		this.addSubject(viewToHide, 'transition-view-to-hide');
@@ -6049,7 +6086,7 @@ Moobile.ViewController = new Class({
 	},
 
 	getTitle: function() {
-		return this.title || 'Untitled';
+		return this.title == null ? 'Untitled' : this.title;
 	},
 
 	isReady: function() {
@@ -6142,7 +6179,7 @@ Moobile.ViewController = new Class({
 
 		this.window = this.view.getWindow();
 
-		this.attachchildViewControllers();
+		this.attachChildViewControllers();
 		this.init();
 		this.attachEvents();
 
@@ -6193,10 +6230,12 @@ Moobile.ViewController = new Class({
 			}.bind(this));
 			return this;
 		}
-
+		
 		this.modalViewController = viewController;
 		this.modalViewController.modal = true;
-
+		
+		this.willPresentModalViewController();
+		
 		this.addChildViewController(this.modalViewController, 'bottom', this.window.getContent());
 
 		var viewToShow = this.modalViewController.getView();
@@ -6223,6 +6262,7 @@ Moobile.ViewController = new Class({
 
 	onPresentTransitionCompleted: function() {
 		this.modalViewController.viewDidEnter();
+		this.didPresentModalViewController()
 		this.window.enableInput();
 		return this;
 	},
@@ -6233,6 +6273,8 @@ Moobile.ViewController = new Class({
 			return this;
 
 		this.window.disableInput();
+
+		this.willDismissModalViewController()
 
 		var viewToShow = this.window.getRootView();
 		var viewToHide = this.modalViewController.getView();
@@ -6258,18 +6300,19 @@ Moobile.ViewController = new Class({
 		this.removeChildViewController(this.modalViewController);
 		this.modalViewController.destroy();
 		this.modalViewController = null;
-		this.window.enableInput();
+		this.didDismissModalViewController();
+		this.window.enableInput();	
 		return this;
 	},
 
-	attachchildViewControllers: function() {
-		var filter = this.bound('filterViewController');
-		var attach = this.bound('attachViewController');
+	attachChildViewControllers: function() {
+		var filter = this.bound('filterChildViewController');
+		var attach = this.bound('attachChildViewController');
 		this.view.getElements('[data-role=view-controller]').filter(filter).each(attach);
 		return this;
 	},
 
-	attachViewController: function(element) {
+	attachChildViewController: function(element) {
 
 		var viewControllerClass = element.get('data-view-controller');
 		if (viewControllerClass) {
@@ -6292,17 +6335,17 @@ Moobile.ViewController = new Class({
 		return this;
 	},
 
-	filterViewController: function(element) {
+	filterChildViewController: function(element) {
 		return element.getParent('[data-role=view-controller]') == this.view.element; // not quite sure
 	},
 
 	destroyChildViewControllers: function() {
-		this.childViewControllers.each(this.bound('destroyViewController'));
+		this.childViewControllers.each(this.bound('destroyChildViewController'));
 		this.childViewControllers.empty();
 		return this;
 	},
 
-	destroyViewController: function(viewController) {
+	destroyChildViewController: function(viewController) {
 		viewController.destroy();
 		viewController = null;
 		return this;
@@ -6319,15 +6362,14 @@ Moobile.ViewController = new Class({
 
 		var view = viewController.getView();
 
-		this.willAddChildViewController(viewController);
-		this.childViewControllers.push(viewController);
-		this.view.addChildView(view, where, context);
-
 		if (viewController.isModal() == false) {
 			viewController.setViewControllerStack(this.viewControllerStack);
 			viewController.setViewControllerPanel(this.viewControllerPanel);
 		}
 
+		this.willAddChildViewController(viewController);
+		this.childViewControllers.push(viewController);
+		this.view.addChildView(view, where, context);
 		viewController.setParentViewController(this);
 		viewController.startup();
 		this.didAddChildViewController(viewController);
@@ -6386,6 +6428,22 @@ Moobile.ViewController = new Class({
 	},
 
 	didRemoveChildViewController: function(viewController) {
+		return this;
+	},
+
+	willPresentModalViewController: function() {
+		return this;
+	},
+	
+	didPresentModalViewController: function() {
+		return this;
+	},
+	
+	willDismissModalViewController: function() {
+		return this;
+	},
+	
+	didDismissModalViewController: function() {
 		return this;
 	},
 
@@ -6451,6 +6509,9 @@ Moobile.ViewControllerStack = new Class({
 	},
 
 	pushViewController: function(viewController, viewTransition) {
+
+		if (this.topViewController == viewController)
+			return;
 
 		if (this.childViewControllers.length > 0)
 			this.window.disableInput();
@@ -6607,9 +6668,9 @@ Moobile.ViewControllerStack = new Class({
 		return this;
 	},
 
-	didAddChildViewController: function(viewController) {
-		viewController.setViewControllerStack(this);
+	willAddChildViewController: function(viewController) {
 		this.parent();
+		viewController.setViewControllerStack(this);
 		return this;
 	},
 
@@ -6658,7 +6719,8 @@ Moobile.ViewControllerStack.Navigation = new Class({
 	Extends: Moobile.ViewControllerStack,
 
 	options: {
-		showBackButton: true
+		backButton: true,
+		backButtonLabel: 'Back'
 	},
 
 	willAddChildViewController: function(viewController) {
@@ -6676,14 +6738,14 @@ Moobile.ViewControllerStack.Navigation = new Class({
 		if (viewController.isModal() || this.childViewControllers.length == 0)
 			return this;
 
-		if (this.options.showBackButton) {
+		if (this.options.backButton) {
 
-			var title = this.topViewController.getTitle();
-			if (title) {
+			var backButtonLabel = this.topViewController.getTitle() || this.options.backButtonLabel;
+			if (backButtonLabel) {
 
 				var backButton = new Moobile.BarButton();
 				backButton.setStyle(Moobile.BarButtonStyle.Back);
-				backButton.setLabel(title);
+				backButton.setLabel(backButtonLabel);
 				backButton.addEvent('click', this.bound('onBackButtonClick'));
 
 				navigationBar.setLeftBarButton(backButton);

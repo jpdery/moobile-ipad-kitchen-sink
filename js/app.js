@@ -1,436 +1,60 @@
-var KitchenSink =  {
-	ViewController: {
-		Control: {},
-		Carousel: {}
-	}
-};
+/*
+---
 
-// -----------------------------------------------------------------------------
-// Navigation: Root
-// -----------------------------------------------------------------------------
+name: ViewController.Control.Bar
 
-KitchenSink.ViewController.Navigation = new Class({
+description: 
 
-	Extends: Moobile.ViewController,
+license: MIT-style license.
 
-	title: 'Home',
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
 
-	list: null,
+requires:
+	- Moobile/ViewController
 
-	init: function() {
-		this.parent();
-		this.list = this.view.getList();
-		return this;
-	},
+provides:
+	- ViewController.Control.Bar
 
-	attachEvents: function() {
-		this.parent();
-		this.list.addEvent('select', this.bound('onListSelect'));
-		return this;
-	},
+...
+*/
 
-	detachEvents: function() {
-		this.parent();
-		this.list.removeEvent('select', this.bound('onListSelect'));
-		return this;
-	},
+if (!window.KitchenSink)						window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)			window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Control)	window.KitchenSink.ViewController.Control = {};
 
-	onListSelect: function(item) {
-
-		var viewController = null;
-
-		switch (item.name) {
-
-			case 'transition':
-				viewController = new KitchenSink.ViewController.Navigation.Transition('views/navigation/transition.html');
-				break;
-
-			case 'control':
-				viewController = new KitchenSink.ViewController.Navigation.Control('views/navigation/control.html');
-				break;
-
-			case 'dialog':
-				viewController = new KitchenSink.ViewController.Navigation.Dialog('views/navigation/dialog.html');
-				break;
-
-			case 'carousel':
-				viewController = new KitchenSink.ViewController.Navigation.Carousel('views/navigation/carousel.html');
-				break;
-
-			case 'other':
-				viewController = new KitchenSink.ViewController.Navigation.Other('views/navigation/other.html');
-				break;
-		}
-
-		if (viewController) this.viewControllerStack.pushViewController(viewController, new Moobile.ViewTransition.Slide);
-
-		return this;
-	}
-
-});
-
-/// -----------------------------------------------------------------------------
-// Navigation: Transitions
-// -----------------------------------------------------------------------------
-
-KitchenSink.ViewController.Navigation.Transition = new Class({
+KitchenSink.ViewController.Control.Bar = new Class({
 
 	Extends: Moobile.ViewController,
 
-	title: 'Transitions',
-
-	init: function() {
-		this.parent();
-		this.list = this.view.getList();
-		return this;
-	},
-
-	attachEvents: function() {
-		this.list.addEvent('select', this.bound('onListSelect'));
-		this.parent();
-		return this;
-	},
-
-	detachEvents: function() {
-		this.list.removeEvent('select', this.bound('onListSelect'));
-		this.parent();
-		return this;
-	},
-
-	onListSelect: function(item) {
-
-		var transitionClass = null;
-		var transitionTitle = null;
-
-		switch (item.name) {
-
-			case 'slide':
-				transitionClass = new Moobile.ViewTransition.Slide;
-				transitionTitle = 'Slide Transition';
-				break;
-
-			case 'cubic':
-				transitionClass = new Moobile.ViewTransition.Cubic;
-				transitionTitle = 'Cubic Transition';
-				break;
-
-			case 'cover':
-				transitionClass = new Moobile.ViewTransition.Cover;
-				transitionTitle = 'Cover Transition';
-				break;
-
-			case 'flip':
-				transitionClass = new Moobile.ViewTransition.Flip;
-				transitionTitle = 'Flip Transition';
-				break;
-
-			case 'fade':
-				transitionClass = new Moobile.ViewTransition.Fade;
-				transitionTitle = 'Fade Transition';
-				break;
-
-			case 'none':
-				transitionClass = new Moobile.ViewTransition.None;
-				transitionTitle = 'No Transition';
-				break;
-		}
-
-		var viewController = new KitchenSink.ViewController.Transition('views/transition/transition.html');
-		viewController.setTitle(transitionTitle);
-		this.viewControllerPanel.getMainViewController().pushViewController(viewController, transitionClass);
-
-		return this;
-	}
+	title: 'Bar'
 
 });
 
-// -----------------------------------------------------------------------------
-// Navigation: Control
-// -----------------------------------------------------------------------------
+/*
+---
 
-KitchenSink.ViewController.Navigation.Control = new Class({
+name: ViewController.Control.Button
 
-	Extends: Moobile.ViewController,
+description:
 
-	title: 'Controls',
+license: MIT-style license.
 
-	list: null,
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
 
-	viewControllers: {},
+requires:
+	- Moobile/ViewController
 
-	init: function() {
-		this.parent();
-		this.list = this.view.getList();
-		return this;
-	},
+provides:
+	- ViewController.Control.Button
 
-	attachEvents: function() {
-		this.parent();
-		this.list.addEvent('select', this.bound('onListSelect'));
-		return this;
-	},
+...
+*/
 
-	detachEvents: function() {
-		this.parent();
-		this.list.removeEvent('select', this.bound('onListSelect'));
-		return this;
-	},
-
-	onListSelect: function(item) {
-
-		var viewController = this.viewControllers[item.name];
-		if (viewController == undefined) {
-
-			switch (item.name) {
-
-				case 'bar':
-					viewController = new KitchenSink.ViewController.Control.Bar('views/control/bar.html');
-					break;
-
-				case 'list':
-					viewController = new KitchenSink.ViewController.Control.List('views/control/list.html');
-					break;
-
-				case 'button':
-					viewController = new KitchenSink.ViewController.Control.Button('views/control/button.html');
-					break;
-
-				case 'slider':
-					viewController = new KitchenSink.ViewController.Control.Slider('views/control/slider.html');
-					break;
-			}
-
-			this.viewControllers[item.name] = viewController;
-		}
-
-		if (viewController) this.viewControllerPanel.getMainViewController().pushViewController(viewController, new Moobile.ViewTransition.Fade);
-
-		return this;
-	}
-
-});
-
-// -----------------------------------------------------------------------------
-// Navigation: Dialog
-// -----------------------------------------------------------------------------
-
-KitchenSink.ViewController.Navigation.Dialog = new Class({
-
-	Extends: Moobile.ViewController,
-
-	title: 'Controls',
-
-	list: null,
-
-	viewControllers: {},
-
-	init: function() {
-		this.parent();
-		this.list = this.view.getList();
-		return this;
-	},
-
-	attachEvents: function() {
-		this.parent();
-		this.list.addEvent('select', this.bound('onListSelect'));
-		return this;
-	},
-
-	detachEvents: function() {
-		this.parent();
-		this.list.removeEvent('select', this.bound('onListSelect'));
-		return this;
-	},
-
-	onListSelect: function(item) {
-
-		var viewController = this.viewControllers[item.name];
-		if (viewController == undefined) {
-
-			switch (item.name) {
-
-				case 'alert':
-					viewController = new KitchenSink.ViewController.Control.Alert('views/dialog/alert.html');
-					break;
-			}
-
-			this.viewControllers[item.name] = viewController;
-		}
-
-		if (viewController) this.viewControllerPanel.getMainViewController().pushViewController(viewController);
-
-		return this;
-	}
-
-});
-
-// -----------------------------------------------------------------------------
-// Navigation: Carousel
-// -----------------------------------------------------------------------------
-
-KitchenSink.ViewController.Navigation.Carousel = new Class({
-
-	Extends: Moobile.ViewController,
-
-	title: 'Carousel',
-
-	list: null,
-
-	viewControllers: {},
-
-	init: function() {
-		this.parent();
-		this.list = this.view.getList();
-		return this;
-	},
-
-	attachEvents: function() {
-		this.parent();
-		this.list.addEvent('select', this.bound('onListSelect'));
-		return this;
-	},
-
-	detachEvents: function() {
-		this.parent();
-		this.list.removeEvent('select', this.bound('onListSelect'));
-		return this;
-	},
-
-	onListSelect: function(item) {
-
-		var viewController = this.viewControllers[item.getName()];
-		if (viewController == undefined) {
-
-			switch (item.getName()) {
-
-				case 'vertical':
-					viewController = new KitchenSink.ViewController.Carousel.Vertical('views/carousel/vertical.html');
-					break;
-
-				case 'horizontal':
-					viewController = new KitchenSink.ViewController.Carousel.Horizontal('views/carousel/horizontal.html');
-					break;
-			}
-
-			this.viewControllers[item.name] = viewController;
-		}
-
-		if (viewController) this.viewControllerPanel.getMainViewController().pushViewController(viewController);
-
-		return this;
-	}
-
-});
-
-// -----------------------------------------------------------------------------
-// Navigation: Other
-// -----------------------------------------------------------------------------
-
-KitchenSink.ViewController.Navigation.Other = new Class({
-
-	Extends: Moobile.ViewController,
-
-	title: 'Others',
-
-	list: null,
-
-	viewControllers: {},
-
-	init: function() {
-		this.parent();
-		this.list = this.view.getList();
-		return this;
-	},
-
-	attachEvents: function() {
-		this.parent();
-		this.list.addEvent('select', this.bound('onListSelect'));
-		return this;
-	},
-
-	detachEvents: function() {
-		this.parent();
-		this.list.removeEvent('select', this.bound('onListSelect'));
-		return this;
-	},
-
-	onListSelect: function(item) {
-
-		var viewController = this.viewControllers[item.name];
-		if (viewController == undefined) {
-
-			switch (item.name) {
-
-				case 'present-modal-view-controller':
-					viewController = new KitchenSink.ViewController.PresentModalViewController('views/other/present-modal-view-controller.html');
-					break;
-			}
-
-			this.viewControllers[item.name] = viewController;
-		}
-
-		if (viewController) this.viewControllerPanel.getMainViewController().pushViewController(viewController);
-
-		return this;
-	}
-
-});
-
-// -----------------------------------------------------------------------------
-// Transition
-// -----------------------------------------------------------------------------
-
-KitchenSink.ViewController.Transition = new Class({
-
-	Extends: Moobile.ViewController,
-
-	transitionName: null,
-
-	init: function() {
-
-		this.parent();
-
-		this.transitionName = this.view.getElement('.transition-view-title');
-		if (this.transitionName) {
-			this.transitionName.set('html', this.title + '<br /><em style="font-size:80%">Click here to see the reciproque</em>');
-		}
-
-		return this;
-	},
-
-	attachEvents: function() {
-		this.parent();
-		this.transitionName.addEvent('click', this.bound('onTransitionNameClick'));
-		return this;
-	},
-
-	detachEvents: function() {
-		this.parent();
-		this.transitionName.removeEvent('click', this.bound('onTransitionNameClick'));
-		return this;
-	},
-
-	onTransitionNameClick: function() {
-		this.viewControllerStack.popViewController();
-	}
-
-});
-
-// -----------------------------------------------------------------------------
-// Control: List
-// -----------------------------------------------------------------------------
-
-KitchenSink.ViewController.Control.List = new Class({
-
-	Extends: Moobile.ViewController,
-
-	title: 'List'
-
-});
-
-// -----------------------------------------------------------------------------
-// Control: Button
-// -----------------------------------------------------------------------------
+if (!window.KitchenSink)						window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)			window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Control)	window.KitchenSink.ViewController.Control = {};
 
 KitchenSink.ViewController.Control.Button = new Class({
 
@@ -440,21 +64,63 @@ KitchenSink.ViewController.Control.Button = new Class({
 
 });
 
-// -----------------------------------------------------------------------------
-// Control: Bars
-// -----------------------------------------------------------------------------
+/*
+---
 
-KitchenSink.ViewController.Control.Bar = new Class({
+name: ViewController.Control.List
+
+description:
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Control.List
+
+...
+*/
+
+if (!window.KitchenSink)						window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)			window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Control)	window.KitchenSink.ViewController.Control = {};
+
+KitchenSink.ViewController.Control.List = new Class({
 
 	Extends: Moobile.ViewController,
 
-	title: 'Bars'
+	title: 'List'
 
 });
 
-// -----------------------------------------------------------------------------
-// Control: Slider
-// -----------------------------------------------------------------------------
+/*
+---
+
+name: ViewController.Control.Slider
+
+description:
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Control.Slider
+
+...
+*/
+
+if (!window.KitchenSink)						window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)			window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Control)	window.KitchenSink.ViewController.Control = {};
 
 KitchenSink.ViewController.Control.Slider = new Class({
 
@@ -464,178 +130,147 @@ KitchenSink.ViewController.Control.Slider = new Class({
 
 });
 
-// -----------------------------------------------------------------------------
-// Dialog
-// -----------------------------------------------------------------------------
+/*
+---
 
-KitchenSink.ViewController.Control.Alert = new Class({
+name: ViewController.Dialog.Alert
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Dialog.Alert
+
+...
+*/
+
+if (!window.KitchenSink)						window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)			window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Dialog)	window.KitchenSink.ViewController.Dialog = {};
+
+
+KitchenSink.ViewController.Dialog.Alert = new Class({
 
 	Extends: Moobile.ViewController,
 
 	title: 'Alert',
 
-	buttons: null,
-
+	alertHButton: null,
+	
+	alertVButton: null,
+	
+	alert: null,
+	
+	acceptButton: null,
+	
+	cancelButton: null,
+	
 	init: function() {
-
-
-		this.buttons = this.view.getChildViews().filter(function(childView) {
-			return childView instanceof Moobile.Button;
-		});
-
+		this.alertHButton = this.view.getAlertHButton();
+		this.alertVButton = this.view.getAlertVButton();
 		return this;
 	},
 
 	attachEvents: function() {
 		this.parent();
-		this.buttons.each(function(button) { button.addEvent('click', this.bound('onButtonClick')) }, this);
+		this.alertHButton.addEvent('click', this.bound('onButtonClick'));
+		this.alertVButton.addEvent('click', this.bound('onButtonClick'));		
 		return this;
 	},
 
 	detachEvents: function() {
 		this.parent();
-		this.buttons.each(function(button) { button.removeEvent('click', this.bound('onButtonClick')) }, this);
+		this.alertHButton.removeEvent('click', this.bound('onButtonClick'));
+		this.alertVButton.removeEvent('click', this.bound('onButtonClick'));
 		return this;
 	},
 
 	onButtonClick: function(e) {
-
-		var dialog = null;
-
+		
 		switch (e.target.getName()) {
 
-			case 'simple-button':
-				dialog = new Moobile.Alert();
-				dialog.setTitle('Alert Title');
-				dialog.setMessage('This is the alert message content');
-				dialog.present();
+			case 'alert-h-button':
+			 	this.alert = new Moobile.Alert(null, { buttonLayout: 'horizontal' });
 				break;
 
-			case 'vertical-button':
-
-				dialog = new Moobile.Alert(null, {buttonLayout:'vertical'});
-				dialog.setTitle('Alert Title');
-				dialog.setMessage('This is the alert message content');
-
-				var yes = new Moobile.Button();
-				yes.setLabel('Yep');
-				yes.setHighlighted(true);
-				dialog.addButton(yes);
-
-				var no = new Moobile.Button();
-				no.setLabel('Nope');
-				dialog.addButton(no);
-
-				dialog.addEvent('buttonclick', function(button) {
-
-					if (button == yes) {
-						var alert1 = new Moobile.Alert();
-						alert1.setTitle('Good!');
-						alert1.setMessage('You clicked yes');
-						alert1.present();
-					}
-
-					if (button == no) {
-						var alert2 = new Moobile.Alert();
-						alert2.setTitle('Good!');
-						alert2.setMessage('You clicked no');
-						alert2.present();
-					}
-
-					dialog.dismiss();
-
-				});
-
-				dialog.present();
-
-				break;
-
-			case 'horizontal-button':
-
-				var dialog = new Moobile.Alert(null, {buttonLayout:'horizontal'});
-				dialog.setTitle('Alert Title');
-				dialog.setMessage('This is the alert message content');
-
-				var yes = new Moobile.Button();
-				yes.setLabel('Yep');
-				yes.setHighlighted(true);
-				dialog.addButton(yes);
-
-				var no = new Moobile.Button();
-				no.setLabel('Nope');
-				dialog.addButton(no);
-
-				dialog.addEvent('buttonclick', function(button) {
-
-					if (button == yes) {
-						var alert1 = new Moobile.Alert();
-						alert1.setTitle('Good!');
-						alert1.setMessage('You clicked yes');
-						alert1.present();
-					}
-
-					if (button == no) {
-						var alert2 = new Moobile.Alert();
-						alert2.setTitle('Good!');
-						alert2.setMessage('You clicked no');
-						alert2.present();
-					}
-
-					dialog.dismiss();
-
-				});
-
-				dialog.present();
-
+			case 'alert-v-button':
+			 	this.alert = new Moobile.Alert(null, { buttonLayout: 'vertical' });
 				break;
 		}
+
+		this.alert.setTitle('Title');
+		this.alert.setMessage('Message');
+
+		this.acceptButton = new Moobile.Button(null, null, 'accept');
+		this.acceptButton.setLabel('OK');
+		this.acceptButton.setHighlighted(true);
+		this.alert.addButton(this.acceptButton);
+
+		this.cancelButton = new Moobile.Button(null, null, 'cancel');
+		this.cancelButton.setLabel('Cancel');
+		this.alert.addButton(this.cancelButton);
+
+		this.alert.addEvent('buttonclick', this.bound('onAlertButtonClick'));
+		this.alert.present();
+		
+		return this;
+	},
+	
+	onAlertButtonClick: function(button) {
+		
+		var alert = new Moobile.Alert();
+
+		alert.setTitle('Message');
+
+		if (button === this.acceptButton) {
+			alert.setMessage('You clicked OK');
+		}
+
+		if (button == this.cancelButton) {
+			alert.setMessage('You clicked Cancel');
+		}
+
+		alert.present();
+
+		this.alert.dismiss();
+		
+		return this;
 	}
 
 });
 
-// -----------------------------------------------------------------------------
-// Carousel: Vertical
-// -----------------------------------------------------------------------------
+/*
+---
 
-KitchenSink.ViewController.Carousel.Vertical = new Class({
+name: ViewController.Dialog.Modal
 
-	Extends: Moobile.ViewController,
+description: 
 
-	init: function() {
-		this.title = 'Vertical Carousel';
+license: MIT-style license.
 
-		var wrapper = this.view.getElement('.carousel');
-		var content = this.view.getElement('.carousel ul');
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
 
-		new Moobile.Scroller.Carousel(wrapper, content, {
-			layout: 'vertical'
-		});
-	}
+requires:
+	- Moobile/ViewController
 
-});
+provides:
+	- ViewController.Dialog.Modal
 
-// -----------------------------------------------------------------------------
-// Control: Horizontal
-// -----------------------------------------------------------------------------
+...
+*/
 
-KitchenSink.ViewController.Carousel.Horizontal = new Class({
+if (!window.KitchenSink)						window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)			window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Dialog)	window.KitchenSink.ViewController.Dialog = {};
 
-	Extends: Moobile.ViewController,
-
-	init: function() {
-		this.title = 'Horizontal Carousel';
-
-		var wrapper = this.view.getElement('.carousel');
-		var content = this.view.getElement('.carousel ul');
-
-		new Moobile.Scroller.Carousel(wrapper, content);
-	}
-
-});
-
-// -----------------------------------------------------------------------------
-// Other: Present Modal View Controller
-// -----------------------------------------------------------------------------
 
 KitchenSink.ViewController.PresentModalViewController = new Class({
 
@@ -696,16 +331,576 @@ KitchenSink.ViewController.ModalViewController = new Class({
 
 });
 
-// -----------------------------------------------------------------------------
-// Welcome
-// -----------------------------------------------------------------------------
+/*
+---
+
+name: ViewController.Navigation
+
+description: The base class for navigation controllers.
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Navigation
+
+...
+*/
+
+if (!window.KitchenSink) 							window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)				window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Navigation)	window.KitchenSink.ViewController.Navigation = {};
+
+
+KitchenSink.ViewController.Navigation = new Class({
+
+	Extends: Moobile.ViewController,
+
+	navigationList: null,
+
+	init: function() {
+		this.navigationList = this.view.getNavigationList();
+		return this;
+	},
+
+	attachEvents: function() {
+		this.navigationList.addEvent('select', this.bound('onNavigationListItemSelect'));
+		return this;
+	},
+
+	detachEvents: function() {
+		this.navigationList.removeEvent('select', this.bound('onNavigationListItemSelect'));
+		return this;
+	},
+
+	viewWillEnter: function() {
+		this.navigationList.setSelectedItem(null);
+		return this;
+	},
+	
+	viewControllerRequested: function(name) {
+		return null;
+	},
+	
+	onNavigationListItemSelect: function(item) {
+			
+		var viewController = this.viewControllerRequested(item.getName());
+		if (viewController) {
+			
+			if (viewController instanceof KitchenSink.ViewController.Navigation) {
+				this.viewControllerPanel.getSideViewController().pushViewController(viewController, new Moobile.ViewTransition.Slide);
+			} else {
+				this.viewControllerPanel.getMainViewController().pushViewController(viewController, new Moobile.ViewTransition.Fade);
+			}			
+		}
+		
+		return this;
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Navigation.Control
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- ViewController.Navigation
+
+provides:
+	- ViewController.Navigation.Control
+
+...
+*/
+
+KitchenSink.ViewController.Navigation.Control = new Class({
+
+	Extends: KitchenSink.ViewController.Navigation,
+
+	title: 'Controls',
+
+	viewControllerRequested: function(name) {
+	
+		switch (name) {
+			
+			case 'bar':
+				return new KitchenSink.ViewController.Control.Bar('views/control/bar.html');
+			
+			case 'list':
+				return new KitchenSink.ViewController.Control.List('views/control/list.html');
+			
+			case 'button':
+				return new KitchenSink.ViewController.Control.Button('views/control/button.html');
+			
+			case 'slider':
+				return new KitchenSink.ViewController.Control.Slider('views/control/slider.html');
+		}
+
+		return null;
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Navigation.Dialog
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- ViewController.Navigation
+
+provides:
+	- ViewController.Navigation.Dialog
+
+...
+*/
+
+KitchenSink.ViewController.Navigation.Dialog = new Class({
+
+	Extends: KitchenSink.ViewController.Navigation,
+
+	title: 'Dialogs',
+
+	viewControllerRequested: function(name) {
+	
+		switch (name) {
+			
+			case 'alert':
+				return new KitchenSink.ViewController.Dialog.Alert('views/dialog/alert.html');
+				
+			case 'modal':
+				return new KitchenSink.ViewController.Dialog.Modal('views/dialog/modala.html');
+				
+		}
+
+		return null;
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Navigation.Root
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- ViewController.Navigation
+
+provides:
+	- ViewController.Navigation.Root
+
+...
+*/
+
+KitchenSink.ViewController.Navigation.Root = new Class({
+
+	Extends: KitchenSink.ViewController.Navigation,
+
+	title: '',
+
+	viewControllerRequested: function(name) {
+	
+		switch (name) {
+
+			case 'control':
+				return new KitchenSink.ViewController.Navigation.Control('views/navigation/control.html');
+
+			case 'scroller':
+				return new KitchenSink.ViewController.Navigation.Scroller('views/navigation/scroller.html');
+
+			case 'dialog':
+				return new KitchenSink.ViewController.Navigation.Dialog('views/navigation/dialog.html');
+
+			case 'transition':
+				return new KitchenSink.ViewController.Navigation.Transition('views/navigation/transition.html');
+		}
+
+		return null;
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Navigation.Scroller
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- ViewController.Navigation
+
+provides:
+	- ViewController.Navigation.Scroller
+
+...
+*/
+
+KitchenSink.ViewController.Navigation.Scroller = new Class({
+
+	Extends: KitchenSink.ViewController.Navigation,
+
+	title: 'Scroller',
+
+	viewControllerRequested: function(name) {
+	
+		switch (name) {
+			
+			case 'scroller':
+				return new KitchenSink.ViewController.Scroller.Scroller('views/scroller/scroller.html');
+				
+			case 'scroll-view':
+				return new KitchenSink.ViewController.Scroller.ScrollView('views/scroller/scroll-view.html');
+				
+			case 'carousel-horizontal':
+				return new KitchenSink.ViewController.Scroller.CarouselHorizontal('views/scroller/carousel-horizontal.html');
+				
+			case 'carousel-vertical':
+				return new KitchenSink.ViewController.Scroller.CarouselVertical('views/scroller/carousel-vertical.html');
+		}
+
+		return null;
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Navigation.Transition
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- ViewController.Navigation
+
+provides:
+	- ViewController.Navigation.Transition
+
+...
+*/
+
+KitchenSink.ViewController.Navigation.Transition = new Class({
+
+	Extends: KitchenSink.ViewController.Navigation,
+
+	title: 'Transitions',
+
+	onNavigationListItemSelect: function(item) {
+		
+		var viewController = null;
+		var viewTransition = null;
+		
+		switch (item.getName()) {
+
+			case 'slide':
+				viewTransition = new Moobile.ViewTransition.Slide;
+				viewController = new KitchenSink.ViewController.Transition('views/transition/slide.html');
+				viewController.setTitle('Slide Transition');
+				break;
+
+			case 'cubic':
+				viewTransition = new Moobile.ViewTransition.Cubic;
+				viewController = new KitchenSink.ViewController.Transition('views/transition/cubic.html');
+				viewController.setTitle('Cubic Transition');
+				break;
+
+			case 'cover':
+				viewTransition = new Moobile.ViewTransition.Cover;
+				viewController = new KitchenSink.ViewController.Transition('views/transition/cover.html');
+				viewController.setTitle('Cover Transition');
+				break;
+
+			case 'flip':
+				viewTransition = new Moobile.ViewTransition.Flip;
+				viewController = new KitchenSink.ViewController.Transition('views/transition/flip.html');
+				viewController.setTitle('Flip Transition');
+				break;
+
+			case 'fade':
+				viewTransition = new Moobile.ViewTransition.Fade;
+				viewController = new KitchenSink.ViewController.Transition('views/transition/fade.html');
+				viewController.setTitle('Fade Transition');
+				break;
+
+			case 'none':
+				viewTransition = new Moobile.ViewTransition.None;
+				viewController = new KitchenSink.ViewController.Transition('views/transition/none.html');
+				viewController.setTitle('No Transition');
+				break;
+		}
+
+		this.viewControllerPanel.getMainViewController().pushViewController(viewController, viewTransition);
+		
+		return this;
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Scroller.CarouselHorizontal
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Scroller.CarouselHorizontal
+
+...
+*/
+
+if (!window.KitchenSink)							window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)				window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Scroller)	window.KitchenSink.ViewController.Scroller = {};
+
+
+KitchenSink.ViewController.Scroller.CarouselHorizontal = new Class({
+
+	Extends: Moobile.ViewController,
+	
+	title: 'Horizontal Carousel',
+	
+	init: function() {
+		var wrapper = this.view.getElement('.carousel');
+		var content = this.view.getElement('.carousel ul');
+		new Moobile.Scroller.Carousel(wrapper, content);
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Scroller.CarouselVertical
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Scroller.CarouselVertical
+
+...
+*/
+
+if (!window.KitchenSink)							window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)				window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Scroller)	window.KitchenSink.ViewController.Scroller = {};
+
+KitchenSink.ViewController.Scroller.CarouselVertical = new Class({
+
+	Extends: Moobile.ViewController,
+	
+	title: 'Vertical Carousel',
+	
+	init: function() {
+		var wrapper = this.view.getElement('.carousel');
+		var content = this.view.getElement('.carousel ul');
+		new Moobile.Scroller.Carousel(wrapper, content, { layout: 'vertical' });
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Scroller.Scroller
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Scroller.Scroller
+
+...
+*/
+
+if (!window.KitchenSink)							window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)				window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Scroller)	window.KitchenSink.ViewController.Scroller = {};
+
+KitchenSink.ViewController.Scroller.Scroller = new Class({
+
+	Extends: Moobile.ViewController,
+	
+	init: function() {		
+		var wrapper = this.view.getElement('.box');
+		var scroller = new Moobile.Scroller(wrapper);
+		scroller.refresh();
+	}
+	
+});
+
+/*
+---
+
+name: ViewController.Scroller.ScrollView
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Scroller.ScrollView
+
+...
+*/
+
+if (!window.KitchenSink)							window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)				window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Scroller)	window.KitchenSink.ViewController.Scroller = {};
+
+KitchenSink.ViewController.Scroller.ScrollView = new Class({
+
+	Extends: Moobile.ViewController,
+	
+});
+
+/*
+---
+
+name: ViewController.Transition
+
+description: 
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Transition
+
+...
+*/
+
+if (!window.KitchenSink)							window.KitchenSink = {};
+if (!window.KitchenSink.ViewController)				window.KitchenSink.ViewController = {};
+if (!window.KitchenSink.ViewController.Transition)	window.KitchenSink.ViewController.Transition = {};
+
+
+KitchenSink.ViewController.Transition = new Class({
+
+	Extends: Moobile.ViewController,
+
+	box: null,
+
+	init: function() {
+		this.parent();
+		this.box = this.view.getElement('.box');
+		return this;
+	},
+
+	attachEvents: function() {
+		this.parent();
+		this.box.addEvent('click', this.bound('onTransitionNameClick'));
+		return this;
+	},
+
+	detachEvents: function() {
+		this.parent();
+		this.box.removeEvent('click', this.bound('onTransitionNameClick'));
+		return this;
+	},
+
+	onTransitionNameClick: function() {
+		this.viewControllerStack.popViewController();
+	}
+
+});
+
+/*
+---
+
+name: ViewController.Welcome
+
+description:
+
+license: MIT-style license.
+
+authors:
+	- Jean-Philippe Dery (jeanphilippe.dery@gmail.com)
+
+requires:
+	- Moobile/ViewController
+
+provides:
+	- ViewController.Control.Bar
+
+...
+*/
 
 KitchenSink.ViewController.Welcome = new Class({
 
 	Extends: Moobile.ViewController,
 
-	init: function() {
-		this.title = 'Welcome';
-	}
+	title: 'Welcome'
 
 });
