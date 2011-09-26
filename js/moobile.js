@@ -4663,7 +4663,19 @@ Moobile.Mask = new Class({
 	Extends: Moobile.View,
 
 	options: {
-		className: 'mask'
+		className: 'mask',
+		fillStyle: 'solid'
+	},
+
+	build: function(element) {
+		
+		this.parent(element);
+		
+		if (this.options.className) {
+			this.element.addClass(this.options.className + '-' + this.options.fillStyle);			
+		}
+		
+		return this;
 	},
 
 	attachEvents: function() {
@@ -4792,7 +4804,9 @@ Moobile.Alert = new Class({
 			this.addButton(dismissButton);
 		}
 
-		this.mask = new Moobile.Mask();
+		this.mask = new Moobile.Mask(null, {
+			fillStyle: 'gradient'
+		});
 
 		Moobile.Window.getInstance().addChildView(this.mask);
 
@@ -5607,22 +5621,22 @@ Moobile.ViewTransition = new Class({
 
 	enter: function(viewToShow, viewToHide, parentView, first) {
 		if (viewToShow) viewToShow.show();
-		this.addEvent('stop:once', this.onEnter.pass([viewToShow, viewToHide, parentView, first], this));
+		this.addEvent('stop:once', this.didEnter.pass([viewToShow, viewToHide, parentView, first], this));
 		return this;
 	},
 
 	leave: function(viewToShow, viewToHide, parentView) {
 		if (viewToShow) viewToShow.show();
-		this.addEvent('stop:once', this.onLeave.pass([viewToShow, viewToHide, parentView], this));
+		this.addEvent('stop:once', this.didLeave.pass([viewToShow, viewToHide, parentView], this));
 		return this;
 	},
 
-	onEnter: function(viewToShow, viewToHide, parentView, first) {
+	didEnter: function(viewToShow, viewToHide, parentView, first) {
 		if (viewToHide) viewToHide.hide();
 		return this;
 	},
 
-	onLeave: function(viewToShow, viewToHide, parentView) {
+	didLeave: function(viewToShow, viewToHide, parentView) {
 		if (viewToHide) viewToHide.hide();
 		return this;
 	},
@@ -5719,47 +5733,135 @@ Moobile.ViewTransition.Cover = new Class({
 
 	Extends: Moobile.ViewTransition,
 
+	options: {
+		presentation: 'fullscreen' // center, box
+	},
+
+	mask: null,
+
 	enter: function(viewToShow, viewToHide, parentView, first) {
 
 		this.parent(viewToShow, viewToHide, parentView, first);
 
-		if (first) {
+		switch (this.options.presentation) {
+			
+			case 'box':					
+				this.mask = new Moobile.Mask();
+				viewToShow = new Element('div.transition-cover-view-wrapper').wraps(viewToShow);
+				parentView.addClass('transition-cover-box');				
+				break;
+			
+			case 'center':
+				this.mask = new Moobile.Mask();
+				parentView.addClass('transition-cover-center');		
+				break;
+			
+			case 'fullscreen':
+				this.mask = null;
+				break;
+		}
+		
+		if (this.mask) {
+
+			this.mask.addClass('transition-cover-mask');
+			this.mask.addEvent('show', this.bound('onMaskShow'));
+			this.mask.addEvent('hide', this.bound('onMaskHide'));
+			
+			parentView.addChildView(this.mask)
+			
+			this.mask.show();			
+		}
+
+		if (first) {			
 			this.animate(viewToShow, 'transition-cover-enter-first');
 			return this;
 		}
 
+		viewToHide.addClass('transition-cover-background-view');
+		viewToShow.addClass('transition-cover-foreground-view');
+
 		this.addSubject(viewToShow, 'transition-view-to-show');
 		this.addSubject(viewToHide, 'transition-view-to-hide');
 
-		this.animate(parentView.content, 'transition-cover-enter');
+		this.animate(parentView.getContent(), 'transition-cover-enter');
 
 		return this;
 	},
-	/*
-	onEnter: function(viewToShow, viewToHide, parentView, first) {
+
+	didEnter: function(viewToShow, viewToHide, parentView, first) {
 		
 		this.parent(viewToShow, viewToHide, parentView, first);
 		
 		viewToHide.show();
-		viewToShow.addClass('transition-cover-enter-background-view');
-		viewToShow.addClass('transition-cover-enter-foreground-view');
 		
 		return this;
 	},
-	*/
+
 	leave: function(viewToShow, viewToHide, parentView) {
 
 		this.parent(viewToShow, viewToHide, parentView);
-
-		viewToShow.removeClass('transition-cover-enter-background-view');
-		viewToShow.removeClass('transition-cover-enter-foreground-view');
-
+		
+		if (this.mask) {
+			this.mask.hide();
+		}
+		
+		if (this.options.presentation == 'box') {
+			var viewToHideElement = document.id(viewToHide);
+			var viewToHideWrapper = viewToHideElement.getParent('.transition-cover-view-wrapper');
+			if (viewToHideWrapper) {
+				viewToHide = viewToHideWrapper;
+			}				
+		}
+		
 		this.addSubject(viewToShow, 'transition-view-to-show');
 		this.addSubject(viewToHide, 'transition-view-to-hide');
 
-		this.animate(parentView.content, 'transition-cover-leave');
+		this.animate(parentView.getContent(), 'transition-cover-leave');
 
 		return this;
+	},
+	
+	didLeave: function(viewToShow, viewToHide, parentView) {
+
+		this.parent(viewToShow, viewToHide, parentView);
+		
+		switch (this.options.presentation) {
+			
+			case 'box':	
+								
+				var viewToHideElement = document.id(viewToHide);
+				var viewToHideWrapper = viewToHideElement.getParent('.transition-cover-view-wrapper');
+				if (viewToHideWrapper) {
+					viewToHideElement.inject(viewToHideWrapper, 'after');
+					viewToHideWrapper.destroy();
+					viewToHideWrapper = null;
+				}
+					
+				parentView.removeClass('transition-cover-box');
+				
+				break;
+			
+			case 'center':
+				parentView.removeClass('transition-cover-center');		
+				break;
+			
+			case 'fullscreen':
+				break;
+		}	
+		
+		viewToHide.removeClass('transition-cover-foreground-view');
+		viewToShow.removeClass('transition-cover-background-view');		
+		
+		return this;		
+	},
+	
+	onMaskShow: function() {
+		
+	},
+	
+	onMaskHide: function() {
+		this.mask.destroy();
+		this.mask = null;
 	}
 
 });

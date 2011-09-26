@@ -19,7 +19,6 @@ sources:
     - "Source/ViewController/ViewController.Control.List.js"
     - "Source/ViewController/ViewController.Control.Slider.js"  
     - "Source/ViewController/ViewController.Dialog.Alert.js"
-    - "Source/ViewController/ViewController.Dialog.Modal.js"
     - "Source/ViewController/ViewController.Navigation.js"
     - "Source/ViewController/ViewController.Navigation.Control.js"
     - "Source/ViewController/ViewController.Navigation.Dialog.js"

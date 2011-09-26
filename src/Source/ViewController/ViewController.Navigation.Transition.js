@@ -49,6 +49,18 @@ KitchenSink.ViewController.Navigation.Transition = new Class({
 				viewController = new KitchenSink.ViewController.Transition('views/transition/cover.html');
 				viewController.setTitle('Cover Transition');
 				break;
+				
+			case 'cover-center':
+				viewTransition = new Moobile.ViewTransition.Cover({ presentation: 'center' });
+				viewController = new KitchenSink.ViewController.Transition('views/transition/cover.html');
+				viewController.setTitle('Cover Transition');
+				break;				
+
+			case 'cover-box':
+				viewTransition = new Moobile.ViewTransition.Cover({ presentation: 'box' });
+				viewController = new KitchenSink.ViewController.Transition('views/transition/cover.html');
+				viewController.setTitle('Cover Transition');
+				break;
 
 			case 'flip':
 				viewTransition = new Moobile.ViewTransition.Flip;
