@@ -26,6 +26,8 @@ if (!window.KitchenSink.ViewController.Scroller)	window.KitchenSink.ViewControll
 KitchenSink.ViewController.Scroller.Scroller = new Class({
 
 	Extends: Moobile.ViewController,
+
+	title: 'Scroller',
 	
 	init: function() {		
 		var wrapper = this.view.getElement('.box');

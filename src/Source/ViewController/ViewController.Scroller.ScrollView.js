@@ -26,5 +26,7 @@ if (!window.KitchenSink.ViewController.Scroller)	window.KitchenSink.ViewControll
 KitchenSink.ViewController.Scroller.ScrollView = new Class({
 
 	Extends: Moobile.ViewController,
+
+	title: 'Scroll View'
 	
 });

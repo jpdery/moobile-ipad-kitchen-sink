@@ -28,6 +28,8 @@ KitchenSink.ViewController.Transition = new Class({
 
 	Extends: Moobile.ViewController,
 
+	title: 'Transition'
+
 	box: null,
 
 	init: function() {

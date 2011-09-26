@@ -33,7 +33,7 @@ KitchenSink.ViewController.Navigation.Dialog = new Class({
 				return new KitchenSink.ViewController.Dialog.Alert('views/dialog/alert.html');
 				
 			case 'modal':
-				return new KitchenSink.ViewController.Dialog.Modal('views/dialog/modala.html');
+				return new KitchenSink.ViewController.Dialog.Modal('views/dialog/modal.html');
 				
 		}
 
