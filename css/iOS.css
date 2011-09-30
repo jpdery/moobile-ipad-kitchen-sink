@@ -1081,7 +1081,7 @@ p small {
 	0% {
 		-webkit-transform: scale(0.6);
 	}
-	35% {
+	45% {
 		-webkit-transform: scale(1.1);
 	}
 	75% {
@@ -1095,11 +1095,9 @@ p small {
 @-webkit-keyframes anim-dismiss-alert {
 	from {
 		opacity: 1;
-		-webkit-transform: scale(1);
 	}
 	to {
 		opacity: 0;
-		-webkit-transform: scale(0.6);
 	}
 }
 
@@ -1117,7 +1115,7 @@ p small {
 
 .alert.present {
  	-webkit-animation-name: anim-present-alert;
-	-webkit-animation-duration: 500ms;
+	-webkit-animation-duration: 400ms;
 	-webkit-animation-iteration-count: 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1);
 	-webkit-animation-fill-mode: both;
@@ -1148,7 +1146,7 @@ p small {
 
 .alert-footer .button {
 	-webkit-box-flex: 1;
-	-webkit-box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.2);
+	-webkit-box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.25);
 	-webkit-border-radius: 4px;
 	border: 1px solid rgba(0, 0, 0, 0.6);
 	background: url(../images/alert-button-bg.png) repeat-x;
@@ -1168,6 +1166,7 @@ p small {
 .alert-footer .button.button-down,
 .alert-footer .button.button-selected {
 	background: url(../images/alert-button-bg.png) 0px -40px repeat-x;
+	border: 1px solid rgba(0, 0, 0, 0.75);
 }
 
 .alert.alert-horizontal .alert-footer {
@@ -1336,7 +1335,7 @@ p small {
 /* Enter First */
 
 .transition-fade-enter-first {
-	-webkit-animation: anim-fade-in 500ms 1;
+	-webkit-animation: anim-fade-in 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 }
 
@@ -1389,7 +1388,7 @@ p small {
 }
 
 .transition-slide-enter-first {
-	-webkit-animation: anim-slide-enter-first 500ms 1;
+	-webkit-animation: anim-slide-enter-first 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 }
 
@@ -1405,7 +1404,7 @@ p small {
 }
 
 .transition-slide-enter {
-	-webkit-animation: anim-slide-enter 500ms 1;
+	-webkit-animation: anim-slide-enter 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	display: block; 											/* Important */
 	overflow: visible;											/* Important */
@@ -1448,12 +1447,12 @@ p small {
 }
 
 .transition-slide-enter .transition-view-to-show .bar > .bar-content {
-	-webkit-animation: anim-slide-enter-view-to-show-navigation-bar 500ms 1;
+	-webkit-animation: anim-slide-enter-view-to-show-navigation-bar 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 }
 
 .transition-slide-enter .transition-view-to-hide .bar > .bar-content {
-	-webkit-animation: anim-slide-enter-view-to-hide-navigation-bar 500ms 1;
+	-webkit-animation: anim-slide-enter-view-to-hide-navigation-bar 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 }
 
@@ -1469,7 +1468,7 @@ p small {
 }
 
 .transition-slide-leave {
-	-webkit-animation: anim-slide-leave 500ms 1;
+	-webkit-animation: anim-slide-leave 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	-webkit-box-orient: horizontal !important;					/* Important */
 	overflow: visible;											/* Important */
@@ -1512,12 +1511,12 @@ p small {
 }
 
 .transition-slide-leave .transition-view-to-show .bar > .bar-content {
-	-webkit-animation: anim-slide-leave-view-to-show-navigation-bar 500ms 1;
+	-webkit-animation: anim-slide-leave-view-to-show-navigation-bar 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 }
 
 .transition-slide-leave .transition-view-to-hide .bar > .bar-content {
-	-webkit-animation: anim-slide-leave-view-to-hide-navigation-bar 500ms 1;
+	-webkit-animation: anim-slide-leave-view-to-hide-navigation-bar 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 }
 
@@ -1536,7 +1535,7 @@ p small {
 }
 
 .transition-cover-enter-first .transition-view-to-show {
-	-webkit-animation: anim-cover-enter-first 500ms 1;
+	-webkit-animation: anim-cover-enter-first 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	z-index: 75;
 }
@@ -1557,7 +1556,7 @@ p small {
 }
 
 .transition-cover-enter .transition-view-to-show {
-	-webkit-animation: anim-cover-enter 500ms 1;
+	-webkit-animation: anim-cover-enter 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	z-index: 75;
 }
@@ -1630,7 +1629,7 @@ p small {
 }
 
 .transition-cover-leave .transition-view-to-hide {
-	-webkit-animation: anim-cover-leave 500ms 1;
+	-webkit-animation: anim-cover-leave 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	z-index: 75;
 }
@@ -1655,7 +1654,7 @@ p small {
 }
 
 .transition-cubic-enter-first {
-	-webkit-animation: anim-cubic-enter-first 500ms 1;
+	-webkit-animation: anim-cubic-enter-first 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	-webkit-transform-style: preserve-3d;
     -webkit-transform-origin: 100% 50%;
@@ -1678,7 +1677,7 @@ p small {
 }
 
 .transition-cubic-enter {
-	-webkit-animation: anim-cubic-enter 500ms 1;
+	-webkit-animation: anim-cubic-enter 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	-webkit-transform-style: preserve-3d;						/* Important */
     -webkit-transform-origin: 100% 50%;							/* Important */
@@ -1709,7 +1708,7 @@ p small {
 }
 
 .transition-cubic-leave {
-	-webkit-animation: anim-cubic-leave 500ms 1;
+	-webkit-animation: anim-cubic-leave 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	-webkit-transform-style: preserve-3d;
     -webkit-transform-origin: 100% 50%;
@@ -1748,7 +1747,7 @@ p small {
 }
 
 .transition-flip-enter-first {
-	-webkit-animation: anim-flip-enter-first 500ms 1;
+	-webkit-animation: anim-flip-enter-first 400ms 1;
 	-webkit-animation-timing-function: cubic-bezier(0.5, 0.1, 0.5, 1.0);
 	-webkit-transform-style: preserve-3d;
     -webkit-transform-origin: 50% 50%;
